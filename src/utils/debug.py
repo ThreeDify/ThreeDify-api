@@ -3,6 +3,7 @@ import sys
 import logging
 import datetime
 
+
 def getLogLevel():
     level = getattr(logging, os.environ.get('LOG_LEVEL', 'DEBUG'), None)
     if not isinstance(level, int):
@@ -47,7 +48,7 @@ def getLogger(name):
 
     logger.addHandler(fileHandler)
     logger.addHandler(streamHandler)
-    
+
     logger.setLevel(getLogLevel())
 
     return logger
