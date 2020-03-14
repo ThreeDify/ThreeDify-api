@@ -19,13 +19,16 @@ $ pipenv shell --three
 ```bash
 $ pipenv install
 ```
-
-## Run
-1. Create `.env` file (once)
+5. Create `.env` file (once)
 ```bash
 $ cp .env.example .env
 ```
-2. Then
+6. Run migrations
 ```bash
-$ pipenv run python src/main.py
+$ pipenv run manage migrate
+```
+
+## Run
+```bash
+$ pipenv run start
 ```
