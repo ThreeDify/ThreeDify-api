@@ -13,6 +13,7 @@ pycodestyle = "*"
 
 [packages]
 django = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.8"
