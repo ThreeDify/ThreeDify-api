@@ -6,25 +6,26 @@ ThreeDfiy is a online platform where you can upload images and create a 3D recon
 
 ## Installation
 1. Make sure you have `python=3.8.2` and `pip=19.2.3`
-2. Create a virtual environment
+2. Install `pipenv`
 ```bash
-$ python3 -m venv .venv
+$ pip3 install pipenv
 ```
-3. Activate the virtual environment (Following command works on linux)
+3. Create and activate virtual environment
 ```bash
-$ source .venv/bin/activate
+$ mkdir .venv
+$ pipenv shell --three
 ```
 4. Install requirements
 ```bash
-$ pip install -r requirements.txt
+$ pipenv install
 ```
 
 ## Run
-Make sure you are inside virtual environment
+1. Create `.env` file (once)
 ```bash
-$ source .venv/bin/activate
+$ cp .env.example .env
 ```
-Then
+2. Then
 ```bash
-$ python src/main.py
+$ pipenv run python src/main.py
 ```
