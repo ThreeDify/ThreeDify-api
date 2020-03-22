@@ -10,10 +10,13 @@ start = "python src/manage.py runserver"
 [dev-packages]
 autopep8 = "*"
 pycodestyle = "*"
+black = "==19.10b0"
 
 [packages]
 django = "*"
 psycopg2 = "*"
+opencv-python = "*"
+numpy = "*"
 
 [requires]
 python_version = "3.8"
