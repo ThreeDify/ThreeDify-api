@@ -3,4 +3,4 @@ from django.shortcuts import render
 
 
 def index(request):
-    return HttpResponse('Hello, World. I\'m calibration api.')
+    return HttpResponse("Hello, World. I'm calibration api.")
