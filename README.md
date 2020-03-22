@@ -41,3 +41,9 @@ $ pipenv run manage migrate
 ```bash
 $ pipenv run start
 ```
+
+## Lint
+Run [black](https://black.readthedocs.io/en/stable/) formatter before pushing.
+```bash
+$ pipenv run black src/.
+```
