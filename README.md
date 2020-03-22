@@ -1,6 +1,8 @@
 # ThreeDfiy-api
 A RESTful API for ThreeDfiy.
 
+[![Lint](https://github.com/silwalanish/ThreeDfiy-api/workflows/Lint%20Check/badge.svg)](https://github.com/silwalanish/ThreeDfiy-api/actions)
+
 # What's ThreeDfiy?
 ThreeDfiy is a online platform where you can upload images and create a 3D reconstruction of the images.
 
