@@ -1,0 +1,32 @@
+name: Lint Check
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ '**/*' ]
+
+jobs:
+  # Check the format of the code
+  lint:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out repository under $GITHUB_WORKSPACE, so job can access it
+    - uses: actions/checkout@v2
+    
+    # Setup python
+    - name: Setup Python
+      uses: actions/setup-python@v1.2.0
+      with:
+        python-version: 3.8.2
+    
+    # Setup environment
+    - name: Setup environment
+      run: pip install black
+    
+    # Run black formatter
+    - name: Run black
+      run: black --diff src/.
