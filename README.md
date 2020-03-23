@@ -46,6 +46,11 @@ $ pipenv run start
 
 ## Lint
 Run [black](https://black.readthedocs.io/en/stable/) formatter before pushing.
+Check if errors exists
 ```bash
-$ pipenv run black src/.
+$ pipenv run lint
+```
+Fix lint errors
+```bash
+$ pipenv run lint-fix
 ```
