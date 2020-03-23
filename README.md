@@ -28,7 +28,7 @@ $ pipenv shell --three
 ```
 5. Install requirements
 ```bash
-$ pipenv install
+$ pipenv install --dev
 ```
 6. Create `.env` file (once)
 ```bash
