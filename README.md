@@ -44,6 +44,14 @@ $ pipenv run manage migrate
 $ pipenv run start
 ```
 
+## Create Django App
+*NOTE: `pipenv run manage startapp {appname}` doesn't work.*
+```bash
+$ pipenv shell
+$ cd src
+$ python manage.py startapp {appname}
+```
+
 ## Lint
 Run [black](https://black.readthedocs.io/en/stable/) formatter before pushing.
 Check if errors exists
