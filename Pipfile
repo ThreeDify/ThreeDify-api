@@ -19,6 +19,7 @@ django = "*"
 psycopg2 = "*"
 opencv-python = "*"
 numpy = "*"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.8"
