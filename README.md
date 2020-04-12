@@ -1,10 +1,10 @@
-# ThreeDfiy-api
-A RESTful API for ThreeDfiy.
+# ThreeDify-api
+A RESTful API for ThreeDify.
 
-[![Lint](https://github.com/silwalanish/ThreeDfiy-api/workflows/Lint%20Check/badge.svg)](https://github.com/silwalanish/ThreeDfiy-api/actions)
+[![Lint](https://github.com/silwalanish/ThreeDify-api/workflows/Lint%20Check/badge.svg)](https://github.com/silwalanish/ThreeDify-api/actions)
 
-# What's ThreeDfiy?
-ThreeDfiy is a online platform where you can upload images and create a 3D reconstruction of the images.
+# What's ThreeDify?
+ThreeDify is a online platform where you can upload images and create a 3D reconstruction of the images.
 
 ## Environment Variables
 | Variable | Description |

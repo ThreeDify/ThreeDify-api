@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "obo@w^bz9w^ibj1a9pf=^hk4wk+!_-jg3&7#mm_c60g5xzhyka"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False if os.environ.get("THREEDFIY_ENV", "production") == "production" else True
+DEBUG = False if os.environ.get("THREEDIFY_ENV", "production") == "production" else True
 
-ALLOWED_HOSTS = [".threedfiy.com"] if DEBUG == False else []
+ALLOWED_HOSTS = [".threedify.com"] if DEBUG == False else []
 
 
 # Application definition
