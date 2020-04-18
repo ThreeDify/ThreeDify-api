@@ -9,6 +9,7 @@ ThreeDify is a online platform where you can upload images and create a 3D recon
 ## Environment Variables
 | Variable | Description |
 |----------|-------------|
+| THREEDIFY_ENV | Environment e.g. `production` or `local` |
 | DB_NAME | Name of the database |
 | DB_USER | User name of the database |
 | DB_PASSWORD | Password for the user of the database |
