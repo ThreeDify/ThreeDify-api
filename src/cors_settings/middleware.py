@@ -1,6 +1,8 @@
+import re
 import uuid
 from django.http import HttpResponseForbidden
-from django.contrib.auth.hashers import check_password, make_password
+from corsheaders.middleware import CorsMiddleware
+from django.contrib.auth.hashers import check_password
 
 from cors_settings.models import App
 
@@ -9,26 +11,28 @@ X_THREEDIFY_APP_KEY = "X-THREEDIFY-APP-KEY"
 X_THREEDIFY_APP_SECRET = "X-THREEDIFY-APP-SECRET"
 
 
-class AppAuthMiddleware:
-    def __init__(self, get_response):
-        self.get_response = get_response
+class AppAuthMiddleware(CorsMiddleware):
 
     def __call__(self, request):
         headers = request.headers
-        path = request.path
 
-        app_key = headers.get(X_THREEDIFY_APP_KEY, "")
-        app_secret = headers.get(X_THREEDIFY_APP_SECRET, "")
+        if (self.is_enabled(request)):
+            app_key = headers.get(X_THREEDIFY_APP_KEY, "")
+            app_secret = headers.get(X_THREEDIFY_APP_SECRET, "")
 
-        if path.split("/")[1] == "api" and not self.authenticate(app_key, app_secret):
-            return HttpResponseForbidden("Could not authenticate application.")
+            if not self.authenticate(app_key, app_secret):
+                return HttpResponseForbidden("Could not authenticate application.")
 
-        return self.get_response(request)
+        return super().__call__(request)
 
     def authenticate(self, api_key, api_secret):
         try:
-            app = App.objects.filter(key=uuid.UUID(hex=api_key)).get()
+            self.app = App.objects.filter(key=uuid.UUID(hex=api_key)).get()
         except:
             return False
 
-        return check_password(api_secret, app.secret)
+        return check_password(api_secret, self.app.secret)
+
+    def regex_domain_match(self, origin):
+        if re.match(self.app.allowed_host, origin):
+            return origin
