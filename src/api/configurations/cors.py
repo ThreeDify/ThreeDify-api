@@ -5,4 +5,4 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-THREEDIFY-APP-SECRET",
 ]
 
-CORS_URLS_REGEX = r'^/api/.*$'
+CORS_URLS_REGEX = r"^/api/.*$"

@@ -12,11 +12,10 @@ X_THREEDIFY_APP_SECRET = "X-THREEDIFY-APP-SECRET"
 
 
 class AppAuthMiddleware(CorsMiddleware):
-
     def __call__(self, request):
         headers = request.headers
 
-        if (self.is_enabled(request)):
+        if self.is_enabled(request):
             app_key = headers.get(X_THREEDIFY_APP_KEY, "")
             app_secret = headers.get(X_THREEDIFY_APP_SECRET, "")
 
