@@ -21,6 +21,8 @@ opencv-python = "*"
 numpy = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
+djoser = "*"
+djangorestframework-simplejwt = "*"
 
 [requires]
 python_version = "3.8"
