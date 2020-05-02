@@ -14,8 +14,9 @@ X_THREEDIFY_APP_SECRET = "X-THREEDIFY-APP-SECRET"
 class AppAuthMiddleware(CorsMiddleware):
     def __call__(self, request):
         headers = request.headers
+        self.is_pre_flight = request.method == "OPTIONS"
 
-        if self.is_enabled(request):
+        if self.is_enabled(request) and not self.is_pre_flight:
             app_key = headers.get(X_THREEDIFY_APP_KEY, "")
             app_secret = headers.get(X_THREEDIFY_APP_SECRET, "")
 
@@ -33,5 +34,9 @@ class AppAuthMiddleware(CorsMiddleware):
         return check_password(api_secret, self.app.secret)
 
     def regex_domain_match(self, origin):
-        if re.match(self.app.allowed_host, origin):
+        if self.is_pre_flight:
+            for app in App.objects.all():
+                if re.match(app.allowed_host, origin):
+                    return origin
+        elif re.match(self.app.allowed_host, origin):
             return origin

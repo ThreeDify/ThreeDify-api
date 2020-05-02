@@ -19,5 +19,6 @@ class App(models.Model):
         return self.name
 
     def save(self, **kwargs):
+        print(self.secret)
         self.secret = make_password(self.secret)
         super().save(**kwargs)
