@@ -8,6 +8,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "cors_settings",
+    "users",
     "rest_framework",
     "rest_framework.authtoken",
     "djoser",
