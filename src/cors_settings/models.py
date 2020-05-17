@@ -18,7 +18,15 @@ class App(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, **kwargs):
-        print(self.secret)
-        self.secret = make_password(self.secret)
-        super().save(**kwargs)
+    def set_secret(self, secret):
+        self._raw_secret = secret
+        self.secret = make_password(secret)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.set_secret(self.secret)
+        super(App, self).save(*args, **kwargs)
+
+    @property
+    def raw_secret(self):
+        return getattr(self, "_raw_secret", None)
