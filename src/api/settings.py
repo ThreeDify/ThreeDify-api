@@ -12,13 +12,13 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 from api.configurations.base import *
 
-from api.configurations.allowed_hosts import ALLOWED_HOSTS
-from api.configurations.apps import INSTALLED_APPS
-from api.configurations.middlewares import MIDDLEWARE
-from api.configurations.database import DATABASES
+from api.configurations.allowed_hosts import *
+from api.configurations.apps import *
+from api.configurations.middlewares import *
+from api.configurations.database import *
 
-from api.configurations.templates import TEMPLATES
-from api.configurations.auth import AUTH_PASSWORD_VALIDATORS
+from api.configurations.templates import *
+from api.configurations.auth import *
 
 from api.configurations.rest_framework import *
 from api.configurations.cors import *
