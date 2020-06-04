@@ -40,6 +40,25 @@ $ cp .env.example .env
 $ pipenv run manage migrate
 ```
 
+## Create CORS App
+You need a unique key and secret to make request to the server. To get the key you need to register a app and whitelist your domain.
+
+Any request to the server must have following two headers.
+```
+"X-THREEDIFY-APP-KEY": YOUR_APP_KEY
+"X-THREEDIFY-APP-SECRET": YOUR_APP_SECRET
+```
+
+Create a CORS App
+```bash
+$ pipenv run manage createcorsapp -n APP_NAME -ah DOMAIN_REGEX -u USERNAME
+``` 
+
+If you lose the secret key.
+```bash
+$ pipenv run regensecret -k APP_KEY
+```
+
 ## Run
 ```bash
 $ pipenv run start
