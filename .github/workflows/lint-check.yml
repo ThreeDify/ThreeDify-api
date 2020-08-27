@@ -23,6 +23,10 @@ jobs:
       with:
         python-version: 3.8
     
+    # Setup environment
+    - name: Setup environment
+      run: pip install black
+    
     # Run black formatter
     - name: Run black
-      uses: psf/black@stable
+      run: black --check --diff src/.
