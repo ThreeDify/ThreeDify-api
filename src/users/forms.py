@@ -10,6 +10,5 @@ class AppUserCreationForm(UserCreationForm):
         fields = ("username", "full_name", "email")
         field_classes = {
             "username": UsernameField,
-            "full_name": CharField,
-            "email": EmailField,
+            "full_name": CharField,"email": EmailField,
         }
