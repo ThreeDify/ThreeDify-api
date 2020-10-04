@@ -1,7 +1,10 @@
+import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
 import User from '../domain/users';
-import * as userService from '../services/users';
+import userService from '../services/users';
+
+const debug: Debugger = Debug('threedify:controller:users');
 
 export async function index(req: Request, res: Response, next: NextFunction) {
   let users: User | User[] = await userService.fetchAllUsers();

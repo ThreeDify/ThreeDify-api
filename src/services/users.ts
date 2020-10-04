@@ -7,19 +7,45 @@ import { User, NewUser } from '../domain/users';
 
 const debug: Debugger = Debug('threedify:services:users');
 
+const selectColumns = ['id', 'first_name', 'last_name', 'username', 'email'];
+
 export async function fetchAllUsers(): Promise<User | User[]> {
   debug('Fetching all users.');
 
-  return await knex().select('*').from<User>('users');
+  return await knex().select(selectColumns).from<User>('users');
 }
 
 export async function fetchUserById(id: number): Promise<User | undefined> {
   debug('Fetching user with id: %d.', id);
 
   return await knex()
-    .select('*')
+    .select(selectColumns)
     .from<User>('users')
     .where('id', '=', id)
+    .first();
+}
+
+export async function fetchUserByEmail(
+  email: string
+): Promise<User | undefined> {
+  debug('Fetching user with email: %s.', email);
+
+  return await knex()
+    .select(selectColumns)
+    .from<User>('users')
+    .where('email', '=', email)
+    .first();
+}
+
+export async function fetchUserByUsername(
+  username: string
+): Promise<User | undefined> {
+  debug('Fetching user with id: %s.', username);
+
+  return await knex()
+    .select(selectColumns)
+    .from<User>('users')
+    .where('username', '=', username)
     .first();
 }
 
@@ -49,4 +75,6 @@ export default {
   createNewUser,
   fetchAllUsers,
   fetchUserById,
+  fetchUserByEmail,
+  fetchUserByUsername,
 };
