@@ -4,7 +4,7 @@ import Debug, { Debugger } from 'debug';
 import app from './app';
 import config from './config';
 
-const debug: Debugger = Debug('cms:api');
+const debug: Debugger = Debug('threedify:api');
 
 app.set('port', config.port);
 
@@ -13,7 +13,12 @@ const server: Server = http.createServer(app);
 server.listen(config.port);
 
 server.on('listening', (): void => {
-  debug('Server listening on port: %d', config.port);
+  debug(
+    'Server listening on port: %d at %s:%d',
+    config.port,
+    config.baseUrl,
+    config.port
+  );
 });
 
 server.on('error', (error: NodeJS.ErrnoException): void => {
