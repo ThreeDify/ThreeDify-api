@@ -40,7 +40,7 @@ export async function fetchUserByEmail(
 export async function fetchUserByUsername(
   username: string
 ): Promise<User | undefined> {
-  debug('Fetching user with id: %s.', username);
+  debug('Fetching user with username: %s.', username);
 
   return await knex()
     .select(selectColumns)
