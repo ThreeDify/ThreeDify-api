@@ -8,12 +8,27 @@ const debug: Debugger = Debug('threedify:controller:auth');
 
 export async function register(
   req: Request<{}, any, NewUser>,
-  res: Response,
+  res: Response<User>,
   next: NextFunction
 ) {
-  let user: User | undefined = await userService.createNewUser(req.body);
+  try {
+    let user: User | undefined = await userService.createNewUser(req.body);
 
-  res.json(user);
+    if (user) {
+      res.json(user);
+      return;
+    }
+
+    throw new Error('Error while creating user.');
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while creating user.',
+      ...err,
+    });
+  }
 }
 
 export default {

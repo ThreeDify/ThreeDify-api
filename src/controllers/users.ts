@@ -7,17 +7,53 @@ import userService from '../services/users';
 const debug: Debugger = Debug('threedify:controller:users');
 
 export async function index(req: Request, res: Response, next: NextFunction) {
-  let users: User | User[] = await userService.fetchAllUsers();
+  try {
+    let users: User[] | undefined = await userService.fetchAllUsers();
 
-  res.json(users);
+    if (users) {
+      res.json(users);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Users not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching users.',
+      ...err,
+    });
+  }
 }
 
 export async function user(req: Request, res: Response, next: NextFunction) {
-  let user: User | undefined = await userService.fetchUserById(
-    +req.params.userId
-  );
+  try {
+    let user: User | undefined = await userService.fetchUserById(
+      +req.params.userId
+    );
 
-  res.json(user);
+    if (user) {
+      res.json(user);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'User not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching user.',
+      ...err,
+    });
+  }
 }
 
 export default {

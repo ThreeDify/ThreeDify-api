@@ -7,9 +7,9 @@ import { User, NewUser } from '../domain/users';
 
 const debug: Debugger = Debug('threedify:services:users');
 
-const selectColumns = ['id', 'first_name', 'last_name', 'username', 'email'];
+const selectColumns = ['id', 'first_name', 'last_name', 'username'];
 
-export async function fetchAllUsers(): Promise<User | User[]> {
+export async function fetchAllUsers(): Promise<User[] | undefined> {
   debug('Fetching all users.');
 
   return await knex().select(selectColumns).from<User>('users');
