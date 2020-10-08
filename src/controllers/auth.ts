@@ -1,7 +1,7 @@
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
-import userService from '../services/users';
+import authService from '../services/auth';
 import { User, NewUser } from '../domain/users';
 
 const debug: Debugger = Debug('threedify:controller:auth');
@@ -12,7 +12,7 @@ export async function register(
   next: NextFunction
 ) {
   try {
-    let user: User | undefined = await userService.createNewUser(req.body);
+    let user: User | undefined = await authService.createNewUser(req.body);
 
     if (user) {
       res.json(user);

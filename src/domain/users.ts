@@ -1,10 +1,12 @@
 export interface User {
   id?: number;
-  email: string;
+  email?: string;
   username: string;
   password?: string;
   last_name: string;
   first_name: string;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
 export interface NewUser {
