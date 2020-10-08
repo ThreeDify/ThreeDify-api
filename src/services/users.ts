@@ -55,7 +55,7 @@ export async function createNewUser(
   debug('Creating new user.');
 
   debug('Hashing user password.');
-  const hashedPassword: string = hash(newUser.rawPassword);
+  const hashedPassword: string = await hash(newUser.rawPassword);
 
   const user: User = {
     email: newUser.email,

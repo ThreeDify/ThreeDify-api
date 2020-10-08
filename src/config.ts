@@ -4,14 +4,14 @@ import { SessionOptions } from 'express-session';
 interface Config {
   port: number;
   baseUrl: string;
-  hashAlgo: string;
+  saltRound: number;
   corsConfig: CorsOptions;
   requestLogFormat: string;
   sessionConfig: SessionOptions;
 }
 
 const config: Config = {
-  hashAlgo: 'sha256',
+  saltRound: 10,
   requestLogFormat: 'tiny',
   baseUrl: process.env.BASE_URL || '',
   port: +(process.env?.PORT || 3000),

@@ -1,17 +1,20 @@
-import { createHash, Hash } from 'crypto';
+import bcrypt from 'bcrypt';
 import Debug, { Debugger } from 'debug';
 
 import config from '../config';
 
 const debug: Debugger = Debug('threedify:utils:hash');
 
-export function hash(data: string): string {
-  debug('Using %s algorithm for hash.', config.hashAlgo);
-  const hasher: Hash = createHash(config.hashAlgo);
+export async function hash(data: string): Promise<string> {
+  debug('Hashing password.');
 
-  hasher.update(data);
+  return await bcrypt.hash(data, config.saltRound);
+}
 
-  return hasher.digest('hex');
+export async function compare(data: string, hash: string): Promise<boolean> {
+  debug('Comparing hash with raw data.');
+
+  return await bcrypt.compare(data, hash);
 }
 
 export default hash;
