@@ -2,7 +2,9 @@ import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
 import authService from '../services/auth';
+import tokenService from '../services/tokens';
 import { User, NewUser } from '../domain/users';
+import { LoginCredential, TokenCredential } from '../domain/login';
 
 const debug: Debugger = Debug('threedify:controller:auth');
 
@@ -31,6 +33,39 @@ export async function register(
   }
 }
 
+export async function login(
+  req: Request<{}, any, LoginCredential>,
+  res: Response<TokenCredential>,
+  next: NextFunction
+) {
+  try {
+    debug('Authenticating user.');
+    let user: User | undefined = await authService.login(req.body);
+
+    if (user) {
+      debug('Generating tokens for user.');
+      const tokens: TokenCredential = await tokenService.createTokens(user);
+
+      res.json(tokens);
+      return;
+    }
+
+    next({
+      status: 401,
+      message: 'Username or Password is incorrect.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while authenticating.',
+      ...err,
+    });
+  }
+}
+
 export default {
+  login,
   register,
 };
