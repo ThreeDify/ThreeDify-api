@@ -1,7 +1,5 @@
 import cors from 'cors';
-import csrf from 'csurf';
 import morgan from 'morgan';
-import sessions from 'express-session';
 import Debug, { Debugger } from 'debug';
 import { json, urlencoded } from 'body-parser';
 import express, { Application } from 'express';
@@ -17,9 +15,6 @@ const app: Application = express();
 app.use(morgan(config.requestLogFormat));
 
 app.use(cors(config.corsConfig));
-
-app.use(sessions(config.sessionConfig));
-// app.use(csrf());
 
 app.use(urlencoded({ extended: false }));
 app.use(json());

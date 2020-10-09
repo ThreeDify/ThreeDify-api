@@ -87,7 +87,7 @@ export async function fetchUserByUsername(
 export async function insertUser(user: User): Promise<number> {
   debug('Inserting user.');
 
-  return +(await knex()('users').returning('id').insert(user));
+  return +(await knex()('users').returning('id').insert<User>(user));
 }
 
 export default {
