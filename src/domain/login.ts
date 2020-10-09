@@ -3,4 +3,9 @@ export interface LoginCredential {
   password: string;
 }
 
+export interface TokenCredential {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export default LoginCredential;

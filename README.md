@@ -11,14 +11,16 @@ ThreeDify is a online platform where you can upload images and create a 3D recon
 
 ## Environment Variables
 
-| Variable                | Description                           |
-| ----------------------- | ------------------------------------- |
-| BASE_URL                | API base url e.g. http://localhost    |
-| APP_BASE_URL            | APP url e.g. http://localhost:8000    |
-| PORT                    | Port to serve the api e.g. 3000       |
-| DB_NAME                 | Name of the database                  |
-| DB_USER                 | User name of the database             |
-| DB_PASSWORD             | Password for the user of the database |
+| Variable             | Description                           |
+| -------------------- | ------------------------------------- |
+| BASE_URL             | API base url e.g. http://localhost    |
+| APP_BASE_URL         | APP url e.g. http://localhost:8000    |
+| PORT                 | Port to serve the api e.g. 3000       |
+| ACCESS_TOKEN_SECRET  | Key used for signing access token     |
+| REFRESH_TOKEN_SECRET | Key used for signing refresh token    |
+| DB_NAME              | Name of the database                  |
+| DB_USER              | User name of the database             |
+| DB_PASSWORD          | Password for the user of the database |
 
 ## Installation
 
