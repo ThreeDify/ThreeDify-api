@@ -71,7 +71,12 @@ export async function me(
   next: NextFunction
 ) {
   const authReq: AuthenticatedRequest = req as AuthenticatedRequest;
-  res.json(authReq.user);
+  res.json({
+    id: authReq.user.id,
+    username: authReq.user.username,
+    first_name: authReq.user.first_name,
+    last_name: authReq.user.last_name,
+  });
 }
 
 export default {
