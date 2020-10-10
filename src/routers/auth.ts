@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import AuthController from '../controllers/auth';
+import authenticate from '../middlewares/authenticate';
 import validateNewUser from '../middlewares/validateNewUser';
 import checkUniqueEmail from '../middlewares/checkUniqueEmail';
 import checkUniqueUsername from '../middlewares/checkUniqueUsername';
@@ -17,6 +18,8 @@ router.post(
 );
 
 router.post('/login', validateLoginCredential, AuthController.login);
+
+router.delete('/logout', authenticate, AuthController.logout);
 
 router.post('/refresh', AuthController.refresh);
 

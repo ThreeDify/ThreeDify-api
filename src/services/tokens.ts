@@ -96,14 +96,22 @@ export async function refreshTokens(
     }
 
     debug('Delete invalid token.');
-    await knex()('tokens').where('id', '=', token.id).del();
+    deleteTokens(token);
   }
 
   return;
 }
 
+export async function deleteTokens(token: Tokens) {
+  if (token.id) {
+    debug('Deleting token with id: %d', token.id);
+    await knex()('tokens').where('id', '=', token.id).del();
+  }
+}
+
 export default {
   createTokens,
+  deleteTokens,
   refreshTokens,
   fetchTokenByUserId,
   fetchTokenByAccessToken,

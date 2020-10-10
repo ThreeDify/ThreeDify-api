@@ -1,10 +1,12 @@
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
+import Tokens from '../domain/tokens';
 import authService from '../services/auth';
 import tokenService from '../services/tokens';
 import { User, NewUser } from '../domain/users';
 import { LoginCredential, TokenCredential } from '../domain/login';
+import { AuthenticatedRequest } from '../middlewares/authenticate';
 
 const debug: Debugger = Debug('threedify:controller:auth');
 
@@ -65,6 +67,34 @@ export async function login(
   }
 }
 
+export async function logout(req: Request, res: Response, next: NextFunction) {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    debug('Fetching active token.');
+    const token:
+      | Tokens
+      | undefined = await tokenService.fetchTokenByAccessToken(
+      authReq.tokenCred.accessToken || ''
+    );
+
+    if (token) {
+      debug('Deleting active token.');
+      await tokenService.deleteTokens(token);
+    }
+
+    res.sendStatus(404);
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while logging out.',
+      ...err,
+    });
+    return;
+  }
+}
+
 export async function refresh(
   req: Request<{}, any, LoginCredential>,
   res: Response<TokenCredential>,
@@ -107,6 +137,7 @@ export async function refresh(
 
 export default {
   login,
+  logout,
   register,
   refresh,
 };
