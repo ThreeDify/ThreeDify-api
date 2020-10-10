@@ -18,4 +18,6 @@ router.post(
 
 router.post('/login', validateLoginCredential, AuthController.login);
 
+router.post('/refresh', AuthController.refresh);
+
 export default router;

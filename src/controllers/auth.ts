@@ -65,7 +65,48 @@ export async function login(
   }
 }
 
+export async function refresh(
+  req: Request<{}, any, LoginCredential>,
+  res: Response<TokenCredential>,
+  next: NextFunction
+) {
+  try {
+    debug('Check if refresh token header exists.');
+    const refreshToken: string | undefined = req
+      .header('x-refresh-token')
+      ?.trim();
+
+    if (refreshToken) {
+      debug('Refresh tokens.');
+      const refreshedToken:
+        | TokenCredential
+        | undefined = await tokenService.refreshTokens({
+        refreshToken,
+      });
+
+      if (refreshedToken) {
+        res.json(refreshedToken);
+        return;
+      }
+    }
+
+    next({
+      status: 401,
+      message: 'Invalid refresh token',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while refreshing token.',
+      ...err,
+    });
+  }
+}
+
 export default {
   login,
   register,
+  refresh,
 };
