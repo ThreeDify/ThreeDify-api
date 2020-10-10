@@ -4,8 +4,8 @@ export interface LoginCredential {
 }
 
 export interface TokenCredential {
-  accessToken: string;
-  refreshToken: string;
+  accessToken?: string;
+  refreshToken?: string;
 }
 
 export default LoginCredential;

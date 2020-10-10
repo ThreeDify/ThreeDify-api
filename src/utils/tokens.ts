@@ -8,13 +8,18 @@ import { TokenCredential } from '../domain/login';
 
 const debug: Debugger = Debug('threedify:utils:tokens');
 
-export function generateTokens(user: User): TokenCredential {
+export function generateAccessToken(): string {
   debug('Generating access token.');
-  const accessToken: string = jwt.sign(
-    { userId: user.id },
+
+  return jwt.sign(
+    { data: crypto.randomBytes(256) },
     config.accessTokenSecret,
     config.accessTokenConfig
   );
+}
+
+export function generateTokens(user: User): TokenCredential {
+  const accessToken: string = generateAccessToken();
 
   debug('Generating refresh token.');
   const refreshToken: string = jwt.sign(
@@ -28,3 +33,58 @@ export function generateTokens(user: User): TokenCredential {
     refreshToken,
   };
 }
+
+export function verifyTokenSign(tokens: TokenCredential, user: User) {
+  debug('Check if access token exists.');
+  if (tokens.accessToken) {
+    debug('Verifing access token.');
+    const isAccessTokenValid: boolean = jwt.verify(
+      tokens.accessToken,
+      config.accessTokenSecret
+    );
+
+    debug('Check if refresh token exists.');
+    if (tokens.refreshToken) {
+      debug('Verifing refresh token.');
+      const isRefreshTokenValid: boolean = jwt.verify(
+        tokens.refreshToken,
+        config.refreshTokenSecret + user.password
+      );
+
+      return [isAccessTokenValid, isRefreshTokenValid];
+    }
+
+    return [isAccessTokenValid, false];
+  }
+
+  return [false, false];
+}
+
+export function refresh(refreshToken: string): TokenCredential | boolean {
+  debug('Check if refresh token exists.');
+  if (!refreshToken) {
+    return false;
+  }
+
+  debug('Verifing refresh token.');
+  const isRefreshTokenValid: boolean = jwt.verify(
+    refreshToken,
+    config.refreshTokenSecret
+  );
+
+  if (isRefreshTokenValid) {
+    return {
+      refreshToken,
+      accessToken: generateAccessToken(),
+    };
+  }
+
+  return false;
+}
+
+export default {
+  generateAccessToken,
+  generateTokens,
+  verifyTokenSign,
+  refresh,
+};

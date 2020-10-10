@@ -8,8 +8,13 @@ export function sign(
   return jwt.sign(payload, secret, options);
 }
 
-export function verify(token: string, secret: string): any {
-  return jwt.verify(token, secret);
+export function verify(token: string, secret: string): boolean {
+  try {
+    jwt.verify(token, secret);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }
 
 export default {
