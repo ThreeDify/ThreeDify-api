@@ -10,7 +10,11 @@ export const NewUserValidationSchema: Joi.ObjectSchema<NewUser> = Joi.object<
     .email({ tlds: { allow: false } })
     .required(),
   rawPassword: Joi.string().min(8).max(20).required(),
-  username: Joi.string().alphanum().min(5).max(15).required(),
+  username: Joi.string()
+    .regex(/^[a-zA-Z0-9_]*$/)
+    .min(5)
+    .max(15)
+    .required(),
 });
 
 export default NewUserValidationSchema;

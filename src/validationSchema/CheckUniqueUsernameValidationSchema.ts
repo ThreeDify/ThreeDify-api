@@ -5,7 +5,11 @@ export const CheckUniqueUsernameValidationSchema: Joi.ObjectSchema<{
 }> = Joi.object<{
   username: string;
 }>({
-  username: Joi.string().alphanum().min(5).max(15).required(),
+  username: Joi.string()
+    .regex(/^[a-zA-Z0-9_]*$/)
+    .min(5)
+    .max(15)
+    .required(),
 });
 
 export default CheckUniqueUsernameValidationSchema;
