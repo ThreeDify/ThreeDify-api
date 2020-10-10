@@ -1,9 +1,12 @@
 import Debug, { Debugger } from 'debug';
 
 import userService from './users';
-import LoginCredential from '../domain/login';
-import hash, { compare } from '../utils/hash';
-import User, { NewUser } from '../domain/users';
+import tokenService from './tokens';
+import Tokens from '../domain/tokens';
+import { hash, compare } from '../utils/hash';
+import { User, NewUser } from '../domain/users';
+import { verifyTokenSign } from '../utils/tokens';
+import { LoginCredential, TokenCredential } from '../domain/login';
 
 const debug: Debugger = Debug('threedify:services:auth');
 
@@ -62,7 +65,43 @@ export async function login(
   return;
 }
 
+export async function authenticate(
+  tokenCred: TokenCredential
+): Promise<User | undefined> {
+  debug('Check if access token exists.');
+  if (!tokenCred.accessToken) {
+    return;
+  }
+
+  debug('Check if token is not revoked.');
+  const token: Tokens | undefined = await tokenService.fetchTokenByAccessToken(
+    tokenCred.accessToken
+  );
+
+  if (token) {
+    debug('Check if user exists.');
+    const user: User | undefined = await userService.fetchUserById(
+      token.user_id,
+      {
+        withPassword: true,
+      }
+    );
+
+    if (user) {
+      debug('Check if the tokens are valid.');
+      const [isAccessTokenValid, _] = verifyTokenSign(tokenCred, user);
+
+      if (isAccessTokenValid) {
+        return user;
+      }
+    }
+  }
+
+  return;
+}
+
 export default {
   login,
   createNewUser,
+  authenticate,
 };
