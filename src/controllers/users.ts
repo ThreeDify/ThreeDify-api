@@ -3,10 +3,15 @@ import { NextFunction, Request, Response } from 'express';
 
 import User from '../domain/users';
 import userService from '../services/users';
+import { AuthenticatedRequest } from '../middlewares/authenticate';
 
 const debug: Debugger = Debug('threedify:controller:users');
 
-export async function index(req: Request, res: Response, next: NextFunction) {
+export async function index(
+  req: Request,
+  res: Response<User[]>,
+  next: NextFunction
+) {
   try {
     let users: User[] | undefined = await userService.fetchAllUsers();
 
@@ -30,7 +35,11 @@ export async function index(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-export async function user(req: Request, res: Response, next: NextFunction) {
+export async function user(
+  req: Request,
+  res: Response<User>,
+  next: NextFunction
+) {
   try {
     let user: User | undefined = await userService.fetchUserById(
       +req.params.userId
@@ -56,7 +65,17 @@ export async function user(req: Request, res: Response, next: NextFunction) {
   }
 }
 
+export async function me(
+  req: Request,
+  res: Response<User>,
+  next: NextFunction
+) {
+  const authReq: AuthenticatedRequest = req as AuthenticatedRequest;
+  res.json(authReq.user);
+}
+
 export default {
-  index,
+  me,
   user,
+  index,
 };

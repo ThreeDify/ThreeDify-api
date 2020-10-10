@@ -10,6 +10,7 @@ import checkUniqueUsername from '../middlewares/checkUniqueUsername';
 
 const router: Router = Router();
 
+router.get('/me', authenticate, UserController.me);
 router.get('/', authenticate, UserController.index);
 router.get('/:userId(\\d+)', authenticate, UserController.user);
 
