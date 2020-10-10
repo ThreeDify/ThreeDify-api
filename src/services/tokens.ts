@@ -80,8 +80,10 @@ export async function refreshTokens(
       const [_, isRefreshTokenValid] = verifyTokenSign(tokenCred, user);
 
       if (isRefreshTokenValid) {
+        debug('Generate new access token.');
         const refreshedAccessToken = generateAccessToken();
 
+        debug('Update access token in database.');
         await knex()('tokens').where('id', '=', token.id).update({
           access_token: refreshedAccessToken,
         });
@@ -94,7 +96,7 @@ export async function refreshTokens(
     }
 
     debug('Delete invalid token.');
-    await knex()('tokens').where('id', '=', token.id).delete();
+    await knex()('tokens').where('id', '=', token.id).del();
   }
 
   return;
@@ -102,6 +104,7 @@ export async function refreshTokens(
 
 export default {
   createTokens,
+  refreshTokens,
   fetchTokenByUserId,
   fetchTokenByAccessToken,
   fetchTokenByRefreshToken,

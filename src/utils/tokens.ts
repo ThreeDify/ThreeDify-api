@@ -35,29 +35,28 @@ export function generateTokens(user: User): TokenCredential {
 }
 
 export function verifyTokenSign(tokens: TokenCredential, user: User) {
+  let isAccessTokenValid: boolean = false;
+  let isRefreshTokenValid: boolean = false;
+
   debug('Check if access token exists.');
   if (tokens.accessToken) {
     debug('Verifing access token.');
-    const isAccessTokenValid: boolean = jwt.verify(
+    isAccessTokenValid = jwt.verify(
       tokens.accessToken,
       config.accessTokenSecret
     );
-
-    debug('Check if refresh token exists.');
-    if (tokens.refreshToken) {
-      debug('Verifing refresh token.');
-      const isRefreshTokenValid: boolean = jwt.verify(
-        tokens.refreshToken,
-        config.refreshTokenSecret + user.password
-      );
-
-      return [isAccessTokenValid, isRefreshTokenValid];
-    }
-
-    return [isAccessTokenValid, false];
   }
 
-  return [false, false];
+  debug('Check if refresh token exists.');
+  if (tokens.refreshToken) {
+    debug('Verifing refresh token.');
+    isRefreshTokenValid = jwt.verify(
+      tokens.refreshToken,
+      config.refreshTokenSecret + user.password
+    );
+  }
+
+  return [isAccessTokenValid, isRefreshTokenValid];
 }
 
 export function refresh(refreshToken: string): TokenCredential | boolean {
