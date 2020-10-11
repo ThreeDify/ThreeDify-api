@@ -1,14 +1,19 @@
+import { resolve } from 'path';
 import { CorsOptions } from 'cors';
 import { SignOptions } from 'jsonwebtoken';
+import { Options as MulterOptions } from 'multer';
 
 interface Config {
   port: number;
   baseUrl: string;
   saltRound: number;
   corsConfig: CorsOptions;
+  uploadDirectory: string;
   requestLogFormat: string;
   accessTokenSecret: string;
   refreshTokenSecret: string;
+  multerConfig: MulterOptions;
+  supportedMimeTypes: string[];
   accessTokenConfig: SignOptions;
   refreshTokenConfig: SignOptions;
 }
@@ -31,6 +36,11 @@ const config: Config = {
   corsConfig: {
     origin: process.env.APP_BASE_URL,
     credentials: true,
+  },
+  supportedMimeTypes: ['image/jpeg', 'image/png'],
+  uploadDirectory: resolve(__dirname, '../uploads'),
+  multerConfig: {
+    dest: resolve(__dirname, '../uploads', 'tmp'),
   },
 };
 
