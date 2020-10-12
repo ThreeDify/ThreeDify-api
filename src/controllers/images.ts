@@ -4,7 +4,7 @@ import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
 import config from '../config';
-import { Image } from '../domain/images';
+import Image from '../models/Image';
 import imageService from '../services/images';
 
 const debug: Debugger = Debug('threedify:controller:images');

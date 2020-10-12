@@ -1,10 +1,12 @@
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
-import Tokens from '../domain/tokens';
+import User from '../models/User';
+import Token from '../models/Token';
 import authService from '../services/auth';
+import { NewUser } from '../domain/NewUser';
 import tokenService from '../services/tokens';
-import { User, NewUser } from '../domain/users';
+import UserResponse from '../domain/UserResponse';
 import { LoginCredential, TokenCredential } from '../domain/login';
 import { AuthenticatedRequest } from '../middlewares/authenticate';
 
@@ -12,14 +14,20 @@ const debug: Debugger = Debug('threedify:controller:auth');
 
 export async function register(
   req: Request<{}, any, NewUser>,
-  res: Response<User>,
+  res: Response<UserResponse>,
   next: NextFunction
 ) {
   try {
     let user: User | undefined = await authService.createNewUser(req.body);
 
     if (user) {
-      res.json(user);
+      res.json({
+        id: user.id,
+        username: user.username,
+        first_name: user.firstName,
+        last_name: user.lastName,
+      });
+
       return;
     }
 
@@ -71,9 +79,7 @@ export async function logout(req: Request, res: Response, next: NextFunction) {
   try {
     const authReq = req as AuthenticatedRequest;
     debug('Fetching active token.');
-    const token:
-      | Tokens
-      | undefined = await tokenService.fetchTokenByAccessToken(
+    const token: Token | undefined = await tokenService.fetchTokenByAccessToken(
       authReq.tokenCred.accessToken || ''
     );
 

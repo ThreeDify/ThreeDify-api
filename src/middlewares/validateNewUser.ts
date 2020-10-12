@@ -2,7 +2,7 @@ import { ValidationResult } from 'joi';
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
-import { NewUser } from '../domain/users';
+import { NewUser } from '../domain/NewUser';
 import { errorToResponse } from '../utils/joi';
 import { ValidationErrorResponse } from '../domain/validations';
 import NewUserValidationSchema from '../validationSchema/NewUserValidationSchema';

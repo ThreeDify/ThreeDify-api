@@ -2,6 +2,7 @@ import http, { Server } from 'http';
 import Debug, { Debugger } from 'debug';
 
 import app from './app';
+import db from './utils/db';
 import config from './config';
 
 const debug: Debugger = Debug('threedify:api');
@@ -13,6 +14,9 @@ const server: Server = http.createServer(app);
 server.listen(config.port);
 
 server.on('listening', (): void => {
+  debug('Initializing db connection.');
+  db.init();
+
   debug(
     'Server listening on port: %d at %s:%d',
     config.port,

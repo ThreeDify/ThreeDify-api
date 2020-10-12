@@ -1,7 +1,6 @@
 import Debug, { Debugger } from 'debug';
 
-import knex from '../utils/knex';
-import { User } from '../domain/users';
+import User from '../models/User';
 
 const debug: Debugger = Debug('threedify:services:users');
 
@@ -42,7 +41,7 @@ export async function fetchAllUsers(
 ): Promise<User[] | undefined> {
   debug('Fetching all users.');
 
-  return await knex().select(getSelectColumns(config)).from<User>('users');
+  return await User.query().select(getSelectColumns(config));
 }
 
 export async function fetchUserById(
@@ -51,9 +50,8 @@ export async function fetchUserById(
 ): Promise<User | undefined> {
   debug('Fetching user with id: %d.', id);
 
-  return await knex()
+  return await User.query()
     .select(getSelectColumns(config))
-    .from<User>('users')
     .where('id', '=', id)
     .first();
 }
@@ -64,9 +62,8 @@ export async function fetchUserByEmail(
 ): Promise<User | undefined> {
   debug('Fetching user with email: %s.', email);
 
-  return await knex()
+  return await User.query()
     .select(getSelectColumns(config))
-    .from<User>('users')
     .where('email', '=', email)
     .first();
 }
@@ -77,17 +74,16 @@ export async function fetchUserByUsername(
 ): Promise<User | undefined> {
   debug('Fetching user with username: %s.', username);
 
-  return await knex()
+  return await User.query()
     .select(getSelectColumns(config))
-    .from<User>('users')
     .where('username', '=', username)
     .first();
 }
 
-export async function insertUser(user: User): Promise<number> {
+export async function insertUser(user: Partial<User>): Promise<User> {
   debug('Inserting user.');
 
-  return +(await knex()('users').returning('id').insert<User>(user));
+  return await User.query().insert(user);
 }
 
 export default {

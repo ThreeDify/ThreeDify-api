@@ -1,9 +1,8 @@
 import Debug, { Debugger } from 'debug';
 
-import knex from '../utils/knex';
 import userService from './users';
-import User from '../domain/users';
-import Tokens from '../domain/tokens';
+import User from '../models/User';
+import Token from '../models/Token';
 import {
   generateAccessToken,
   generateTokens,
@@ -18,10 +17,9 @@ export async function createTokens(user: User): Promise<TokenCredential> {
   const tokens: TokenCredential = generateTokens(user);
 
   debug('Saving tokens.');
-  await knex()('tokens').insert<Tokens>({
-    user_id: user.id,
-    access_token: tokens.accessToken,
-    refresh_token: tokens.refreshToken,
+  await Token.query().insert({
+    ...tokens,
+    userId: user.id,
   });
 
   return tokens;
@@ -29,31 +27,20 @@ export async function createTokens(user: User): Promise<TokenCredential> {
 
 export async function fetchTokenByUserId(
   userId: number
-): Promise<Tokens[] | undefined> {
-  return await knex()
-    .select('*')
-    .from<Tokens>('tokens')
-    .where('user_id', '=', userId);
+): Promise<Token[] | undefined> {
+  return await Token.query().where('userId', '=', userId);
 }
 
 export async function fetchTokenByAccessToken(
   accessToken: string
-): Promise<Tokens | undefined> {
-  return await knex()
-    .select('*')
-    .from<Tokens>('tokens')
-    .where('access_token', '=', accessToken)
-    .first();
+): Promise<Token | undefined> {
+  return await Token.query().where('accessToken', '=', accessToken).first();
 }
 
 export async function fetchTokenByRefreshToken(
   refreshToken: string
-): Promise<Tokens | undefined> {
-  return await knex()
-    .select('*')
-    .from<Tokens>('tokens')
-    .where('refresh_token', '=', refreshToken)
-    .first();
+): Promise<Token | undefined> {
+  return await Token.query().where('refreshToken', '=', refreshToken).first();
 }
 
 export async function refreshTokens(
@@ -65,14 +52,17 @@ export async function refreshTokens(
   }
 
   debug('Check if token is not revoked.');
-  const token: Tokens | undefined = await fetchTokenByRefreshToken(
+  const token: Token | undefined = await fetchTokenByRefreshToken(
     tokenCred.refreshToken
   );
 
   if (token?.id) {
     debug('Check if user exists.');
     const user: User | undefined = await userService.fetchUserById(
-      token.user_id
+      token.userId,
+      {
+        withPassword: true,
+      }
     );
 
     if (user) {
@@ -84,9 +74,9 @@ export async function refreshTokens(
         const refreshedAccessToken = generateAccessToken();
 
         debug('Update access token in database.');
-        await knex()('tokens').where('id', '=', token.id).update({
-          access_token: refreshedAccessToken,
-        });
+        await Token.query()
+          .patch({ accessToken: refreshedAccessToken })
+          .where('id', '=', token.id);
 
         return {
           accessToken: refreshedAccessToken,
@@ -102,10 +92,10 @@ export async function refreshTokens(
   return;
 }
 
-export async function deleteTokens(token: Tokens) {
+export async function deleteTokens(token: Token) {
   if (token.id) {
     debug('Deleting token with id: %d', token.id);
-    await knex()('tokens').where('id', '=', token.id).del();
+    await Token.query().deleteById(token.id);
   }
 }
 

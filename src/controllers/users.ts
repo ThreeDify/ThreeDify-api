@@ -1,22 +1,32 @@
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
-import User from '../domain/users';
+import User from '../models/User';
 import userService from '../services/users';
+import UserResponse from '../domain/UserResponse';
 import { AuthenticatedRequest } from '../middlewares/authenticate';
 
 const debug: Debugger = Debug('threedify:controller:users');
 
 export async function index(
   req: Request,
-  res: Response<User[]>,
+  res: Response<UserResponse[]>,
   next: NextFunction
 ) {
   try {
     let users: User[] | undefined = await userService.fetchAllUsers();
 
     if (users) {
-      res.json(users);
+      res.json(
+        users.map((user) => {
+          return {
+            id: user.id,
+            username: user.username,
+            first_name: user.firstName,
+            last_name: user.lastName,
+          };
+        })
+      );
       return;
     }
 
@@ -37,7 +47,7 @@ export async function index(
 
 export async function user(
   req: Request,
-  res: Response<User>,
+  res: Response<UserResponse>,
   next: NextFunction
 ) {
   try {
@@ -46,7 +56,12 @@ export async function user(
     );
 
     if (user) {
-      res.json(user);
+      res.json({
+        id: user.id,
+        username: user.username,
+        first_name: user.firstName,
+        last_name: user.lastName,
+      });
       return;
     }
 
@@ -67,15 +82,15 @@ export async function user(
 
 export async function me(
   req: Request,
-  res: Response<User>,
+  res: Response<UserResponse>,
   next: NextFunction
 ) {
   const authReq: AuthenticatedRequest = req as AuthenticatedRequest;
   res.json({
     id: authReq.user.id,
     username: authReq.user.username,
-    first_name: authReq.user.first_name,
-    last_name: authReq.user.last_name,
+    first_name: authReq.user.firstName,
+    last_name: authReq.user.lastName,
   });
 }
 

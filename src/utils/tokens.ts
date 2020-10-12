@@ -3,7 +3,7 @@ import Debug, { Debugger } from 'debug';
 
 import jwt from './jwt';
 import config from '../config';
-import User from '../domain/users';
+import User from '../models/User';
 import { TokenCredential } from '../domain/login';
 
 const debug: Debugger = Debug('threedify:utils:tokens');

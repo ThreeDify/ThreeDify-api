@@ -2,7 +2,7 @@ import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 
-import User from '../domain/users';
+import User from '../models/User';
 import authService from '../services/auth';
 import { TokenCredential } from '../domain/login';
 

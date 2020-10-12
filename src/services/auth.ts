@@ -1,10 +1,11 @@
 import Debug, { Debugger } from 'debug';
 
 import userService from './users';
+import User from '../models/User';
 import tokenService from './tokens';
-import Tokens from '../domain/tokens';
+import Token from '../models/Token';
+import { NewUser } from '../domain/NewUser';
 import { hash, compare } from '../utils/hash';
-import { User, NewUser } from '../domain/users';
 import { verifyTokenSign } from '../utils/tokens';
 import { LoginCredential, TokenCredential } from '../domain/login';
 
@@ -18,18 +19,16 @@ export async function createNewUser(
   debug('Hashing user password.');
   const hashedPassword: string = await hash(newUser.rawPassword);
 
-  const user: User = {
+  const user: Partial<User> = {
     email: newUser.email,
     password: hashedPassword,
     username: newUser.username,
-    last_name: newUser.last_name,
-    first_name: newUser.first_name,
+    lastName: newUser.last_name,
+    firstName: newUser.first_name,
   };
 
-  const userId: number = await userService.insertUser(user);
-  debug('User inserted successful.');
-
-  return await userService.fetchUserById(userId);
+  debug('Inserting user record.');
+  return await userService.insertUser(user);
 }
 
 export async function login(
@@ -53,12 +52,7 @@ export async function login(
     );
 
     if (passwordMatched) {
-      return {
-        id: user.id,
-        username: user.username,
-        first_name: user.first_name,
-        last_name: user.last_name,
-      };
+      return user;
     }
   }
 
@@ -74,14 +68,14 @@ export async function authenticate(
   }
 
   debug('Check if token is not revoked.');
-  const token: Tokens | undefined = await tokenService.fetchTokenByAccessToken(
+  const token: Token | undefined = await tokenService.fetchTokenByAccessToken(
     tokenCred.accessToken
   );
 
   if (token) {
     debug('Check if user exists.');
     const user: User | undefined = await userService.fetchUserById(
-      token.user_id,
+      token.userId,
       {
         withPassword: true,
       }

@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { NewUser } from '../domain/users';
+import { NewUser } from '../domain/NewUser';
 
 export const NewUserValidationSchema: Joi.ObjectSchema<NewUser> = Joi.object<
   NewUser
