@@ -1,6 +1,9 @@
+import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
 import packageJson from '../../package.json';
+
+const debug: Debugger = Debug('threedify:controller:home');
 
 export interface HomeControllerResponse {
   name: string;
