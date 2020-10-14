@@ -1,5 +1,5 @@
 export interface ValidationError {
-  value?: string;
+  value?: any;
   message: string;
 }
 

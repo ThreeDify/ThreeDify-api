@@ -12,6 +12,13 @@ export async function fetchImageByFileName(
   return await Image.query().where('fileName', '=', fileName).first();
 }
 
+export async function insertImage(image: Partial<Image>): Promise<Image> {
+  debug('Inserting image with name: %s.', image.fileName);
+
+  return await Image.query().insertAndFetch(image);
+}
+
 export default {
+  insertImage,
   fetchImageByFileName,
 };
