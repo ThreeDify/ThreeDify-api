@@ -14,6 +14,100 @@ interface ReconstructionCreationResponse {
   errors: ValidationErrorItem[];
 }
 
+export async function index(
+  req: Request,
+  res: Response<Reconstruction[]>,
+  next: NextFunction
+) {
+  try {
+    let reconstructions:
+      | Reconstruction[]
+      | undefined = await reconstructionService.fetchAllReconstructions();
+
+    if (reconstructions) {
+      res.json(reconstructions);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstructions not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching reconstructions.',
+      ...err,
+    });
+  }
+}
+
+export async function reconstruction(
+  req: Request,
+  res: Response<Reconstruction>,
+  next: NextFunction
+) {
+  try {
+    let reconstruction:
+      | Reconstruction
+      | undefined = await reconstructionService.fetchReconstructionById(
+      +req.params.id
+    );
+
+    if (reconstruction) {
+      res.json(reconstruction);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstruction not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching reconstruction.',
+      ...err,
+    });
+  }
+}
+
+export async function userReconstruction(
+  req: Request,
+  res: Response<Reconstruction[]>,
+  next: NextFunction
+) {
+  try {
+    let reconstructions:
+      | Reconstruction[]
+      | undefined = await reconstructionService.fetchReconstructionByUserId(
+      +req.params.userId
+    );
+
+    if (reconstructions) {
+      res.json(reconstructions);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstructions not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching reconstructions for user.',
+      ...err,
+    });
+  }
+}
+
 export async function create(
   req: Request,
   res: Response<ReconstructionCreationResponse>,
@@ -62,5 +156,8 @@ export async function create(
 }
 
 export default {
+  index,
   create,
+  reconstruction,
+  userReconstruction,
 };

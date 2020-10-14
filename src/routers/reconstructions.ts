@@ -9,6 +9,10 @@ const router: Router = Router();
 
 const imageUploadMiddlewares = uploadImages('images');
 
+router.get('/', ReconstructionController.index);
+
+router.get('/:id', ReconstructionController.reconstruction);
+
 router.post(
   '/create',
   authenticate,
