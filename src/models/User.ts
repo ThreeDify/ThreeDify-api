@@ -18,6 +18,14 @@ export class User extends Model {
   static get tableName() {
     return TABLE_NAME;
   }
+
+  static get modifiers() {
+    return {
+      defaultSelect(builder: any) {
+        builder.select('id', 'username', 'lastName', 'firstName');
+      },
+    };
+  }
 }
 
 export default User;
