@@ -24,7 +24,7 @@ export async function validateLoginCredential(
   );
 
   if (result.error) {
-    res.status(401);
+    res.status(422);
     res.json(errorToResponse(result.error));
     return;
   }

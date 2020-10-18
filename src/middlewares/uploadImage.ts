@@ -81,6 +81,7 @@ export function uploadSingleImage(key: string) {
           await uploadImage(file, key, authReq);
 
           if (authReq.fileValidationErrors.length === 1) {
+            res.status(422);
             res.json({
               errors: authReq.fileValidationErrors,
             });
@@ -91,6 +92,7 @@ export function uploadSingleImage(key: string) {
           return;
         }
 
+        res.status(422);
         res.json({
           errors: [
             {
@@ -129,6 +131,7 @@ export function uploadImages(key: string) {
           }
 
           if (authReq.fileValidationErrors.length === req.files.length) {
+            res.status(422);
             res.json({
               errors: authReq.fileValidationErrors,
             });
@@ -138,6 +141,7 @@ export function uploadImages(key: string) {
           return;
         }
 
+        res.status(422);
         res.json({
           errors: [
             {

@@ -25,29 +25,41 @@ export async function checkUniqueEmail(
     email: email,
   });
   if (result.error) {
+    res.status(422);
     res.json(errorToResponse(result.error));
     return;
   }
 
-  debug('Checking if email "%s" is already used.', result.value.email);
-  let user = await userService.fetchUserByEmail(result.value.email);
+  try {
+    debug('Checking if email "%s" is already used.', result.value.email);
+    let user = await userService.fetchUserByEmail(result.value.email);
 
-  if (user) {
-    res.json({
-      errors: [
-        {
-          email: {
-            message: 'This email is already registered to another user.',
-            value: result.value.email,
+    if (user) {
+      res.status(409);
+      res.json({
+        errors: [
+          {
+            email: {
+              message: 'This email is already registered to another user.',
+              value: result.value.email,
+            },
           },
-        },
-      ],
+        ],
+      });
+
+      return;
+    }
+
+    next();
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while validating email.',
+      ...err,
     });
-
-    return;
   }
-
-  next();
 }
 
 export default checkUniqueEmail;

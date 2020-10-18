@@ -2,17 +2,12 @@ import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
 import Reconstruction from '../models/Reconstruction';
-import { ValidationErrorItem } from '../domain/validations';
 import NewReconstruction from '../domain/NewReconstruction';
 import reconstructionService from '../services/reconstructions';
 import { AuthRequestWithFiles } from '../middlewares/uploadImage';
+import ReconstructionCreationResponse from '../domain/ReconstructionCreationResponse';
 
 const debug: Debugger = Debug('threedify:controller:reconstructions');
-
-interface ReconstructionCreationResponse {
-  reconstruction: Reconstruction;
-  errors: ValidationErrorItem[];
-}
 
 export async function index(
   req: Request,

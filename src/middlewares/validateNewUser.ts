@@ -21,6 +21,7 @@ export async function validateNewUser(
   });
 
   if (result.error) {
+    res.status(422);
     res.json(errorToResponse(result.error));
     return;
   }
