@@ -38,6 +38,7 @@
  *            $ref: '#/components/schemas/NewUser'
  *
  */
+
 export interface NewUser {
   email: string;
   username: string;

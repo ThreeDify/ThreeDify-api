@@ -1,6 +1,3 @@
-import Reconstruction from '../models/Reconstruction';
-import { ValidationErrorItem } from '../domain/validations';
-
 /**
  * @swagger
  *
@@ -24,6 +21,10 @@ import { ValidationErrorItem } from '../domain/validations';
  *            $ref: '#/components/schemas/ReconstructionCreationResponse'
  *
  */
+
+import Reconstruction from '../models/Reconstruction';
+import { ValidationErrorItem } from '../domain/validations';
+
 export interface ReconstructionCreationResponse {
   reconstruction?: Reconstruction;
   errors?: ValidationErrorItem[];

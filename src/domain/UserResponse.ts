@@ -48,6 +48,7 @@
  *              $ref: '#/components/schemas/UserResponse'
  *
  */
+
 export interface UserResponse {
   id: number;
   email?: string;

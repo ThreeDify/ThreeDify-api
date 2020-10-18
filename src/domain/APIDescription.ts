@@ -20,6 +20,7 @@
  *          schema:
  *            $ref: '#/components/schemas/APIDescription'
  */
+
 export interface APIDescription {
   name: string;
   version: string;

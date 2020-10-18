@@ -10,32 +10,11 @@
  *          type: object
  *        message:
  *          type: string
- */
-export interface ValidationError {
-  value?: any;
-  message: string;
-}
-
-/**
- * @swagger
- *
- * components:
- *  schemas:
  *    ValidationErrorItem:
  *      type: object
  *      properties:
  *        key:
  *          $ref: '#/components/schemas/ValidationError'
- */
-export interface ValidationErrorItem {
-  [key: string]: ValidationError;
-}
-
-/**
- * @swagger
- *
- * components:
- *  schemas:
  *    ValidationErrorResponse:
  *      type: object
  *      properties:
@@ -58,6 +37,16 @@ export interface ValidationErrorItem {
  *            $ref: '#/components/schemas/ValidationErrorResponse'
  *
  */
+
+export interface ValidationError {
+  value?: any;
+  message: string;
+}
+
+export interface ValidationErrorItem {
+  [key: string]: ValidationError;
+}
+
 export interface ValidationErrorResponse {
   errors: ValidationErrorItem[];
 }

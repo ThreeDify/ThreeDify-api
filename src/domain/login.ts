@@ -18,6 +18,7 @@
  *          schema:
  *            $ref: '#/components/schemas/LoginCredential'
  */
+
 export interface LoginCredential {
   username: string;
   password: string;
@@ -56,6 +57,7 @@ export interface LoginCredential {
  *          schema:
  *            $ref: '#/components/schemas/TokenCredential'
  */
+
 export interface TokenCredential {
   accessToken?: string;
   refreshToken?: string;

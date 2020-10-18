@@ -1,5 +1,3 @@
-import { HttpError as Error } from 'http-errors';
-
 /**
  * @swagger
  *
@@ -22,6 +20,9 @@ import { HttpError as Error } from 'http-errors';
  *          schema:
  *            $ref: '#/components/schemas/HTTPError'
  */
+
+import { HttpError as Error } from 'http-errors';
+
 export interface HTTPError {
   code: number;
   message: string;
