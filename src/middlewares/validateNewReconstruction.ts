@@ -25,6 +25,7 @@ export async function validateNewReconstruction(
   );
 
   if (result.error) {
+    res.status(422);
     res.json(errorToResponse(result.error));
 
     debug('Cleaning up temp files.');

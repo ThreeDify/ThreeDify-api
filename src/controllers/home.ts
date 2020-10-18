@@ -2,18 +2,13 @@ import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
 import packageJson from '../../package.json';
+import APIDescription from '../domain/APIDescription';
 
 const debug: Debugger = Debug('threedify:controller:home');
 
-export interface HomeControllerResponse {
-  name: string;
-  version: string;
-  description: string;
-}
-
-function index(
+export function index(
   request: Request,
-  response: Response<HomeControllerResponse>,
+  response: Response<APIDescription>,
   next: NextFunction
 ): void {
   response.json({

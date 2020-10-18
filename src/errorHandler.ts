@@ -1,15 +1,11 @@
 import createError from 'http-errors';
 import { Request, Response, NextFunction } from 'express';
 
-export interface HttpErrorResponse {
-  code: number;
-  message: string;
-  error?: createError.HttpError;
-}
+import HTTPError from './domain/HttpError';
 
 export function handle404(
   req: Request,
-  res: Response,
+  res: Response<HTTPError>,
   next: NextFunction
 ): void {
   next(createError(404));
@@ -18,7 +14,7 @@ export function handle404(
 export function handleError(
   err: createError.HttpError,
   req: Request,
-  res: Response<HttpErrorResponse>,
+  res: Response<HTTPError>,
   next: NextFunction
 ) {
   res.status(err.status || 500);

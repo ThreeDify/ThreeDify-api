@@ -25,29 +25,41 @@ export async function checkUniqueUsername(
     username: username,
   });
   if (result.error) {
+    res.status(422);
     res.json(errorToResponse(result.error));
     return;
   }
 
-  debug('Checking if username "%s" is already used.', result.value.username);
-  let user = await userService.fetchUserByUsername(result.value.username);
+  try {
+    debug('Checking if username "%s" is already used.', result.value.username);
+    let user = await userService.fetchUserByUsername(result.value.username);
 
-  if (user) {
-    res.json({
-      errors: [
-        {
-          username: {
-            message: 'User with this username already exists.',
-            value: result.value.username,
+    if (user) {
+      res.status(409);
+      res.json({
+        errors: [
+          {
+            username: {
+              message: 'User with this username already exists.',
+              value: result.value.username,
+            },
           },
-        },
-      ],
+        ],
+      });
+
+      return;
+    }
+
+    next();
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while validating username.',
+      ...err,
     });
-
-    return;
   }
-
-  next();
 }
 
 export default checkUniqueUsername;
