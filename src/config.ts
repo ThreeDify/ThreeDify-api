@@ -56,9 +56,9 @@ const config: Config = {
       },
     },
     apis: [
-      resolve(__dirname, 'domain/*.ts'),
-      resolve(__dirname, 'models/*.ts'),
-      resolve(__dirname, 'routers/*.ts'),
+      resolve(__dirname, 'domain/*.*'),
+      resolve(__dirname, 'models/*.*'),
+      resolve(__dirname, 'routers/*.*'),
     ],
   },
 };
