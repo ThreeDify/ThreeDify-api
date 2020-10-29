@@ -6,7 +6,7 @@ import Debug, { Debugger } from 'debug';
 import config from '../config';
 import { saveFile } from './storage';
 import { getStorageAPI } from './storage';
-import StorageAPI from '../domain/StorageAPI';
+import StorageAPI, { AvailableStorageAPI } from '../domain/StorageAPI';
 
 const debug: Debugger = Debug('threedify:utils:uploads');
 
@@ -18,11 +18,11 @@ export function isFileSupported(mimeType: string): boolean {
   return config.supportedMimeTypes.includes(mimeType);
 }
 
-function getUploadDirectory(): string {
+export function getUploadDirectory(): string {
   switch (config.storageAPI) {
-    case 'local':
+    case AvailableStorageAPI.LOCAL:
       return config.uploadDirectory;
-    case 'drive':
+    case AvailableStorageAPI.DRIVE:
       if (!config.googleAPIConfig) {
         debug(
           'Google API not configured correctly. Cannot get upload directory id.'
@@ -74,4 +74,5 @@ export default {
   cleanUp,
   upload,
   isFileSupported,
+  getUploadDirectory,
 };

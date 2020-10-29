@@ -148,11 +148,14 @@ export async function resumableFileUpload(
   const fileSize: number = statSync(sourceFilePath).size;
 
   debug('Creating metadata for file...');
-  let metadata = {
+  let metadata: any = {
     name: destinationFileName,
     mimeType: mimeType,
-    parents: [uploadDirId],
   };
+
+  if (uploadDirId) {
+    metadata['parents'] = [uploadDirId];
+  }
 
   let client: OAuth2Client = getAuthenticatedClient();
   let uploadCompleted = false;

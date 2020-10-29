@@ -1,6 +1,7 @@
-import fs from 'fs';
 import { resolve } from 'path';
+import { Readable } from 'stream';
 import Debug, { Debugger } from 'debug';
+import fs, { createReadStream } from 'fs';
 
 const debug: Debugger = Debug('threedify:utils:localDiskStorage');
 
@@ -31,6 +32,12 @@ export async function saveFile(
   await fs.promises.copyFile(tmpFilePath, filePath);
 }
 
+export async function openReadStream(filePath: string): Promise<Readable> {
+  return new Promise(async (success, reject) => {
+    success(createReadStream(filePath));
+  });
+}
+
 export async function unlinkFile(filePath: string) {
   debug('Removing file (%s) from local disk storage.', filePath);
   await fs.promises.unlink(filePath);
@@ -41,4 +48,5 @@ export default {
   unlinkFile,
   fileExists,
   getFilePath,
+  openReadStream,
 };

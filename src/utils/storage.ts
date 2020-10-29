@@ -1,7 +1,7 @@
 import Debug, { Debugger } from 'debug';
 
 import config from '../config';
-import StorageAPI from '../domain/StorageAPI';
+import StorageAPI, { AvailableStorageAPI } from '../domain/StorageAPI';
 import localDiskStorage from './localDiskStorage';
 import googleDriveStorage from './google/googleDriveStorage';
 
@@ -9,9 +9,9 @@ const debug: Debugger = Debug('threedify:utils:storage');
 
 export function getStorageAPI(): StorageAPI {
   switch (config.storageAPI) {
-    case 'local':
+    case AvailableStorageAPI.LOCAL:
       return localDiskStorage;
-    case 'drive':
+    case AvailableStorageAPI.DRIVE:
       return googleDriveStorage;
     default:
       throw new Error(`Storage API (${config.storageAPI}) not Implemented.`);
