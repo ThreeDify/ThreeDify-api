@@ -6,10 +6,13 @@ import { Options as SwaggerOptions } from 'swagger-jsdoc';
 
 import packageJson from '../package.json';
 
+import GoogleAPIConfig from './domain/GoogleAPIConfig';
+
 interface Config {
   port: number;
   baseUrl: string;
   saltRound: number;
+  storageAPI: string;
   corsConfig: CorsOptions;
   uploadDirectory: string;
   requestLogFormat: string;
@@ -20,6 +23,7 @@ interface Config {
   swaggerConfig: SwaggerOptions;
   accessTokenConfig: SignOptions;
   refreshTokenConfig: SignOptions;
+  googleAPIConfig?: GoogleAPIConfig;
 }
 
 const config: Config = {
@@ -27,6 +31,7 @@ const config: Config = {
   requestLogFormat: 'tiny',
   baseUrl: process.env.BASE_URL || '',
   port: +(process.env?.PORT || 3000),
+  storageAPI: process.env.STORAGE_API || 'local',
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || '',
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
   accessTokenConfig: {
@@ -60,6 +65,14 @@ const config: Config = {
       resolve(__dirname, 'models/*.*'),
       resolve(__dirname, 'routers/*.*'),
     ],
+  },
+  googleAPIConfig: {
+    client_id: process.env.GOOGLE_CLIENT_ID || '',
+    scopes: ['https://www.googleapis.com/auth/drive'],
+    client_secret: process.env.GOOGLE_CLIENT_SECRET || '',
+    redirect_url: process.env.GOOGLE_REDIRECT_URL || '',
+    refresh_token: process.env.GOOGLE_REFRESH_TOKEN || '',
+    upload_directory_id: process.env.GOOGLE_DRIVE_UPLOAD_FOLDER_ID || '',
   },
 };
 

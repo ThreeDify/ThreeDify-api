@@ -38,7 +38,7 @@ async function uploadImage(
   authReq: AuthRequestWithFiles
 ) {
   debug('Uploading file: %s', file.originalname);
-  const fileName: string | undefined = upload(file);
+  const fileName: string = await upload(file);
 
   authReq.images = authReq.images || [];
   authReq.fileValidationErrors = authReq.fileValidationErrors || [];
