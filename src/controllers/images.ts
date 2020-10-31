@@ -1,11 +1,12 @@
-import { resolve } from 'path';
-import { existsSync } from 'fs';
+import { Readable } from 'stream';
 import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
-import config from '../config';
 import Image from '../models/Image';
 import imageService from '../services/images';
+import StorageAPI from '../domain/StorageAPI';
+import { getStorageAPI } from '../utils/storage';
+import { getUploadDirectory } from '../utils/uploads';
 
 const debug: Debugger = Debug('threedify:controller:images');
 
@@ -18,11 +19,20 @@ export async function image(req: Request, res: Response, next: NextFunction) {
       const image: Image | undefined = await imageService.fetchImageByFileName(
         fileName
       );
-      const filePath = resolve(config.uploadDirectory, fileName);
+
+      const storageAPI: StorageAPI = getStorageAPI();
+      const filePath: string = await storageAPI.getFilePath(
+        getUploadDirectory(),
+        fileName
+      );
 
       debug('Check if image file exists.');
-      if (image?.id && existsSync(filePath)) {
-        res.sendFile(filePath);
+      if (image?.id && (await storageAPI.fileExists(filePath))) {
+        let stream: Readable = await storageAPI.openReadStream(filePath);
+
+        res.setHeader('Content-Type', image.mimetype);
+        stream.pipe(res);
+
         return;
       }
     }

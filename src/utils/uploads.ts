@@ -1,10 +1,12 @@
-import { resolve } from 'path';
+import { unlinkSync } from 'fs';
 import { randomBytes } from 'crypto';
 import { extension } from 'mime-types';
 import Debug, { Debugger } from 'debug';
-import { copyFileSync, existsSync, unlinkSync } from 'fs';
 
 import config from '../config';
+import { saveFile } from './storage';
+import { getStorageAPI } from './storage';
+import StorageAPI, { AvailableStorageAPI } from '../domain/StorageAPI';
 
 const debug: Debugger = Debug('threedify:utils:uploads');
 
@@ -12,28 +14,41 @@ function getRandomString(): string {
   return randomBytes(20).toString('hex');
 }
 
-function getFileName(): string {
-  debug('Generating file name.');
-  let newFileName: string = getRandomString();
-
-  while (existsSync(resolve(config.uploadDirectory, newFileName))) {
-    newFileName = getRandomString();
-  }
-
-  return newFileName;
-}
-
 export function isFileSupported(mimeType: string): boolean {
   return config.supportedMimeTypes.includes(mimeType);
 }
 
-export function saveFile(tmpFilePath: string, mimeType: string): string {
-  debug('Saving file.');
-  let fileName: string = getFileName() + '.' + extension(mimeType);
+export function getUploadDirectory(): string {
+  switch (config.storageAPI) {
+    case AvailableStorageAPI.LOCAL:
+      return config.uploadDirectory;
+    case AvailableStorageAPI.DRIVE:
+      if (!config.googleAPIConfig) {
+        debug(
+          'Google API not configured correctly. Cannot get upload directory id.'
+        );
+        throw new Error('Google API not configured correctly.');
+      }
+      return config.googleAPIConfig.upload_directory_id;
+    default:
+      throw new Error(`Storage API (${config.storageAPI}) not Implemented.`);
+  }
+}
 
-  copyFileSync(tmpFilePath, resolve(config.uploadDirectory, fileName));
+async function getFileName(mimeType: string): Promise<string[]> {
+  const storageAPI: StorageAPI = getStorageAPI();
+  const uploadDirectory: string = getUploadDirectory();
 
-  return fileName;
+  debug('Generating file name.');
+  let newFileName: string = '';
+  let filePath: string = '';
+
+  do {
+    newFileName = getRandomString() + '.' + extension(mimeType);
+    filePath = await storageAPI.getFilePath(uploadDirectory, newFileName);
+  } while (await storageAPI.fileExists(filePath));
+
+  return [newFileName, filePath];
 }
 
 export function cleanUp(tmpFilePath: string) {
@@ -41,11 +56,14 @@ export function cleanUp(tmpFilePath: string) {
   unlinkSync(tmpFilePath);
 }
 
-export function upload(file: Express.Multer.File): string | undefined {
+export async function upload(file: Express.Multer.File): Promise<string> {
   debug('Uploading file.');
   let fileName: string = '';
+  let filePath: string = '';
+
   if (isFileSupported(file.mimetype)) {
-    fileName = saveFile(file.path, file.mimetype);
+    [fileName, filePath] = await getFileName(file.mimetype);
+    await saveFile(file.path, filePath, file.mimetype);
   }
 
   cleanUp(file.path);
@@ -55,6 +73,6 @@ export function upload(file: Express.Multer.File): string | undefined {
 export default {
   cleanUp,
   upload,
-  saveFile,
   isFileSupported,
+  getUploadDirectory,
 };
