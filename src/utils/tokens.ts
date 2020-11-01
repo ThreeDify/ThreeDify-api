@@ -5,21 +5,22 @@ import jwt from './jwt';
 import config from '../config';
 import User from '../models/User';
 import { TokenCredential } from '../domain/login';
+import AccessTokenPayload from '../domain/AccessTokenPayload';
 
 const debug: Debugger = Debug('threedify:utils:tokens');
 
-export function generateAccessToken(): string {
+export function generateAccessToken(user: User): string {
   debug('Generating access token.');
 
   return jwt.sign(
-    { data: crypto.randomBytes(256) },
+    { data: { id: user.id, random: crypto.randomBytes(256) } },
     config.accessTokenSecret,
     config.accessTokenConfig
   );
 }
 
 export function generateTokens(user: User): TokenCredential {
-  const accessToken: string = generateAccessToken();
+  const accessToken: string = generateAccessToken(user);
 
   debug('Generating refresh token.');
   const refreshToken: string = jwt.sign(
@@ -55,35 +56,29 @@ export function verifyTokenSign(tokens: TokenCredential, user: User) {
       config.refreshTokenSecret + user.password
     );
   }
-
   return [isAccessTokenValid, isRefreshTokenValid];
 }
 
-export function refresh(refreshToken: string): TokenCredential | boolean {
-  debug('Check if refresh token exists.');
-  if (!refreshToken) {
-    return false;
-  }
+export function verifyAndDecodeAccessToken(
+  accessToken: string
+): boolean | AccessTokenPayload {
+  debug('Check if access token exists.');
+  if (accessToken) {
+    debug('Verifing and decoding access token.');
+    let isAccessTokenValid: boolean | AccessTokenPayload = jwt.decode(
+      accessToken,
+      config.accessTokenSecret
+    );
 
-  debug('Verifing refresh token.');
-  const isRefreshTokenValid: boolean = jwt.verify(
-    refreshToken,
-    config.refreshTokenSecret
-  );
-
-  if (isRefreshTokenValid) {
-    return {
-      refreshToken,
-      accessToken: generateAccessToken(),
-    };
+    return isAccessTokenValid;
   }
 
   return false;
 }
 
 export default {
-  generateAccessToken,
   generateTokens,
   verifyTokenSign,
-  refresh,
+  generateAccessToken,
+  verifyAndDecodeAccessToken,
 };
