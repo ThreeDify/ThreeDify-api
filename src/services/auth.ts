@@ -2,11 +2,10 @@ import Debug, { Debugger } from 'debug';
 
 import userService from './users';
 import User from '../models/User';
-import tokenService from './tokens';
-import Token from '../models/Token';
 import { NewUser } from '../domain/NewUser';
 import { hash, compare } from '../utils/hash';
-import { verifyTokenSign } from '../utils/tokens';
+import { verifyAndDecodeAccessToken } from '../utils/tokens';
+import AccessTokenPayload from '../domain/AccessTokenPayload';
 import { LoginCredential, TokenCredential } from '../domain/login';
 
 const debug: Debugger = Debug('threedify:services:auth');
@@ -67,27 +66,19 @@ export async function authenticate(
     return;
   }
 
-  debug('Check if token is not revoked.');
-  const token: Token | undefined = await tokenService.fetchTokenByAccessToken(
+  debug('Check if the access token is valid.');
+  const payload = verifyAndDecodeAccessToken(
     tokenCred.accessToken
-  );
+  ) as AccessTokenPayload;
 
-  if (token) {
+  if (payload) {
     debug('Check if user exists.');
     const user: User | undefined = await userService.fetchUserById(
-      token.userId,
-      {
-        withPassword: true,
-      }
+      payload.data.id
     );
 
     if (user) {
-      debug('Check if the tokens are valid.');
-      const [isAccessTokenValid, _] = verifyTokenSign(tokenCred, user);
-
-      if (isAccessTokenValid) {
-        return user;
-      }
+      return user;
     }
   }
 

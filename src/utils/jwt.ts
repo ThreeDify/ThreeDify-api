@@ -17,7 +17,16 @@ export function verify(token: string, secret: string): boolean {
   }
 }
 
+export function decode(token: string, secret: string): boolean | any {
+  try {
+    return jwt.verify(token, secret);
+  } catch (err) {
+    return false;
+  }
+}
+
 export default {
   sign,
   verify,
+  decode,
 };
