@@ -71,7 +71,7 @@ export async function refreshTokens(
 
       if (isRefreshTokenValid) {
         debug('Generate new access token.');
-        const refreshedAccessToken = generateAccessToken();
+        const refreshedAccessToken = generateAccessToken(user);
 
         debug('Update access token in database.');
         await Token.query()
