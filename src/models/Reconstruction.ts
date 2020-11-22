@@ -31,10 +31,10 @@ const TABLE_NAME: string = 'reconstructions';
  *          type: number
  *        createdByUser:
  *          $ref: '#/components/schemas/User'
- *        created_at:
+ *        createdAt:
  *          type: string
  *          format: date-time
- *        updated_at:
+ *        updatedAt:
  *          type: string
  *          format: date-time
  *  responses:
@@ -44,14 +44,19 @@ const TABLE_NAME: string = 'reconstructions';
  *        application/json:
  *          schema:
  *            $ref: '#/components/schemas/Reconstruction'
- *    ReconstructionArray:
- *      description: Array of Reconstruction data in JSON response.
+ *    PaginatedReconstructionResult:
+ *      description: Paginated array of Reconstruction data in JSON response.
  *      content:
  *        application/json:
  *          schema:
- *            type: array
- *            items:
- *              $ref: '#/components/schemas/Reconstruction'
+ *            allOf:
+ *              - $ref: '#/components/schemas/PaginatedResult'
+ *              - type: object
+ *                properties:
+ *                  data:
+ *                    type: array
+ *                    items:
+ *                      $ref: '#/components/schemas/Reconstruction'
  */
 export class Reconstruction extends Model {
   id!: number;

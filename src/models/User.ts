@@ -29,10 +29,10 @@ const TABLE_NAME: string = 'users';
  *          type: string
  *        rawPassword:
  *          type: string
- *        created_at:
+ *        createdAt:
  *          type: string
  *          format: date-time
- *        updated_at:
+ *        updatedAt:
  *          type: string
  *          format: date-time
  *  responses:
@@ -59,8 +59,8 @@ export class User extends Model {
   lastName!: string;
   firstName!: string;
 
-  created_at?: Date;
-  updated_at?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 
   rawPassword?: string;
 

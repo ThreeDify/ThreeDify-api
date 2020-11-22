@@ -85,9 +85,13 @@ router.get('/:userId(\\d+)', authenticate, UserController.user);
  *      - name: user_id
  *        in: path
  *        description: Id of user to fetch reconstructions.
+ *      - $ref: '#/components/parameters/page'
+ *      - $ref: '#/components/parameters/size'
+ *      - $ref: '#/components/parameters/filters'
+ *      - $ref: '#/components/parameters/order'
  *    responses:
  *      200:
- *        $ref: '#/components/responses/ReconstructionArray'
+ *        $ref: '#/components/responses/PaginatedReconstructionResult'
  *      401:
  *        $ref: '#/components/responses/HTTPError'
  *      404:

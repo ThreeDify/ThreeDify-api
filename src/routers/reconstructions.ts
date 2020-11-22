@@ -15,9 +15,14 @@ const imageUploadMiddlewares = uploadImages('images');
  * /reconstructions:
  *  get:
  *    description: End point to fetch all reconstructions.
+ *    parameters:
+ *      - $ref: '#/components/parameters/page'
+ *      - $ref: '#/components/parameters/size'
+ *      - $ref: '#/components/parameters/filters'
+ *      - $ref: '#/components/parameters/order'
  *    responses:
  *      200:
- *        $ref: '#/components/responses/ReconstructionArray'
+ *        $ref: '#/components/responses/PaginatedReconstructionResult'
  *      404:
  *        $ref: '#/components/responses/HTTPError'
  *      500:
