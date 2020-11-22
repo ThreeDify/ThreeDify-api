@@ -31,7 +31,7 @@ export function getPaginationQuery(query: any): PaginationQuery {
 
   debug('Extracting pagination sort order.');
   let sortOrder = (paginationQuery.order as string)?.toUpperCase();
-  if (!(sortOrder in SortOrder)) {
+  if (!Object.values(SortOrder).includes(sortOrder as SortOrder)) {
     sortOrder = defaultOption.order;
   }
 
