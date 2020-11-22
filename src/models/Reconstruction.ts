@@ -2,6 +2,7 @@ import { Model } from 'objection';
 
 import User from './User';
 import Image from './Image';
+import ReconstructionState from '../domain/ReconstructionState';
 
 const TABLE_NAME: string = 'reconstructions';
 
@@ -20,6 +21,8 @@ const TABLE_NAME: string = 'reconstructions';
  *          type: number
  *        name:
  *          type: string
+ *        state:
+ *          $ref: '#/components/schemas/ReconstructionState'
  *        images:
  *          type: array
  *          items:
@@ -54,6 +57,7 @@ export class Reconstruction extends Model {
   id!: number;
   name!: string;
   createdBy!: number;
+  state!: ReconstructionState;
 
   createdAt?: Date;
   updatedAt?: Date;
