@@ -30,7 +30,7 @@ function getSelectColumns(config?: UserColumnSelection): string[] {
   }
 
   if (withTimestamps) {
-    columns.push('created_at', 'updated_at');
+    columns.push('createdAt', 'updatedAt');
   }
 
   return columns;

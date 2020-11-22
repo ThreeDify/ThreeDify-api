@@ -1,4 +1,4 @@
-import { Model } from 'objection';
+import { Model, QueryBuilder } from 'objection';
 
 import User from './User';
 import Image from './Image';
@@ -31,12 +31,27 @@ const TABLE_NAME: string = 'reconstructions';
  *          type: number
  *        createdByUser:
  *          $ref: '#/components/schemas/User'
- *        created_at:
+ *        createdAt:
  *          type: string
  *          format: date-time
- *        updated_at:
+ *        updatedAt:
  *          type: string
  *          format: date-time
+ *  parameters:
+ *    reconstruction_filters:
+ *      in: query
+ *      name: filters
+ *      description: Filters to apply to generate pages. For multiple filters, use comma(,) separated value.<br>
+ *                   Use filters to select only some data. For example, `inQueue` filters reconstruction that are in queue.<br>
+ *                   This can also be used to order data. For example, `orderByCreatedAt` sorts data by createdAt field.
+ *      required: false
+ *      schema:
+ *        type: string
+ *        enum:
+ *          - orderByCreatedAt
+ *          - inQueue
+ *          - inProgress
+ *          - completed
  *  responses:
  *    Reconstruction:
  *      description: Reconstruction data in JSON response.
@@ -44,14 +59,19 @@ const TABLE_NAME: string = 'reconstructions';
  *        application/json:
  *          schema:
  *            $ref: '#/components/schemas/Reconstruction'
- *    ReconstructionArray:
- *      description: Array of Reconstruction data in JSON response.
+ *    PaginatedReconstructionResult:
+ *      description: Paginated array of Reconstruction data in JSON response.
  *      content:
  *        application/json:
  *          schema:
- *            type: array
- *            items:
- *              $ref: '#/components/schemas/Reconstruction'
+ *            allOf:
+ *              - $ref: '#/components/schemas/PaginatedResult'
+ *              - type: object
+ *                properties:
+ *                  data:
+ *                    type: array
+ *                    items:
+ *                      $ref: '#/components/schemas/Reconstruction'
  */
 export class Reconstruction extends Model {
   id!: number;
@@ -67,6 +87,31 @@ export class Reconstruction extends Model {
 
   static get tableName() {
     return TABLE_NAME;
+  }
+
+  static get modifiers() {
+    return {
+      inQueue(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.INQUEUE);
+      },
+      inProgress(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.INPROGRESS);
+      },
+      completed(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.COMPLETED);
+      },
+      orderByCreatedAt(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.orderBy(ref('createdAt'), builder.context().sortOrder || 'ASC');
+      },
+    };
   }
 
   static get relationMappings() {
