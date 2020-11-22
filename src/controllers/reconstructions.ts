@@ -2,6 +2,9 @@ import Debug, { Debugger } from 'debug';
 import { Request, NextFunction, Response } from 'express';
 
 import Reconstruction from '../models/Reconstruction';
+import PaginationQuery from '../domain/PaginationQuery';
+import PaginatedResult from '../domain/PaginatedResult';
+import { getPaginationQuery } from '../utils/pagination';
 import NewReconstruction from '../domain/NewReconstruction';
 import reconstructionService from '../services/reconstructions';
 import { AuthRequestWithFiles } from '../middlewares/uploadImage';
@@ -11,13 +14,17 @@ const debug: Debugger = Debug('threedify:controller:reconstructions');
 
 export async function index(
   req: Request,
-  res: Response<Reconstruction[]>,
+  res: Response<PaginatedResult<Reconstruction>>,
   next: NextFunction
 ) {
   try {
-    let reconstructions:
-      | Reconstruction[]
-      | undefined = await reconstructionService.fetchAllReconstructions();
+    const paginationQuery: PaginationQuery = getPaginationQuery(req.query);
+
+    const reconstructions:
+      | PaginatedResult<Reconstruction>
+      | undefined = await reconstructionService.fetchAllReconstructions(
+      paginationQuery
+    );
 
     if (reconstructions) {
       res.json(reconstructions);
@@ -73,14 +80,17 @@ export async function reconstruction(
 
 export async function userReconstruction(
   req: Request,
-  res: Response<Reconstruction[]>,
+  res: Response<PaginatedResult<Reconstruction>>,
   next: NextFunction
 ) {
   try {
-    let reconstructions:
-      | Reconstruction[]
+    const paginationQuery: PaginationQuery = getPaginationQuery(req.query);
+
+    const reconstructions:
+      | PaginatedResult<Reconstruction>
       | undefined = await reconstructionService.fetchReconstructionByUserId(
-      +req.params.userId
+      +req.params.userId,
+      paginationQuery
     );
 
     if (reconstructions) {

@@ -1,4 +1,4 @@
-import { Model } from 'objection';
+import { Model, QueryBuilder } from 'objection';
 
 const TABLE_NAME: string = 'users';
 
@@ -70,8 +70,14 @@ export class User extends Model {
 
   static get modifiers() {
     return {
-      defaultSelect(builder: any) {
-        builder.select('id', 'username', 'lastName', 'firstName');
+      defaultSelect(builder: QueryBuilder<User>) {
+        const { ref } = User;
+        builder.select(
+          ref('id'),
+          ref('username'),
+          ref('lastName'),
+          ref('firstName')
+        );
       },
     };
   }

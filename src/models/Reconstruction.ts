@@ -1,4 +1,4 @@
-import { Model } from 'objection';
+import { Model, QueryBuilder } from 'objection';
 
 import User from './User';
 import Image from './Image';
@@ -67,6 +67,31 @@ export class Reconstruction extends Model {
 
   static get tableName() {
     return TABLE_NAME;
+  }
+
+  static get modifiers() {
+    return {
+      inQueue(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.INQUEUE);
+      },
+      inProgress(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.INPROGRESS);
+      },
+      completed(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.COMPLETED);
+      },
+      orderByCreatedAt(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.orderBy(ref('createdAt'), builder.context().sortOrder || 'ASC');
+      },
+    };
   }
 
   static get relationMappings() {
