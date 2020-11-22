@@ -14,7 +14,7 @@ jobs:
 
       # Setup Node
       - name: Setup Node.js for use with actions
-        uses: actions/setup-node@v1.1.0
+        uses: actions/setup-node@v1.4.4
         with:
           version: 13.11.0
 
