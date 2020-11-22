@@ -18,7 +18,7 @@ const imageUploadMiddlewares = uploadImages('images');
  *    parameters:
  *      - $ref: '#/components/parameters/page'
  *      - $ref: '#/components/parameters/size'
- *      - $ref: '#/components/parameters/filters'
+ *      - $ref: '#/components/parameters/reconstruction_filters'
  *      - $ref: '#/components/parameters/order'
  *    responses:
  *      200:

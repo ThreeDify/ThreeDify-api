@@ -37,6 +37,21 @@ const TABLE_NAME: string = 'reconstructions';
  *        updatedAt:
  *          type: string
  *          format: date-time
+ *  parameters:
+ *    reconstruction_filters:
+ *      in: query
+ *      name: filters
+ *      description: Filters to apply to generate pages. For multiple filters, use comma(,) separated value.<br>
+ *                   Use filters to select only some data. For example, `inQueue` filters reconstruction that are in queue.<br>
+ *                   This can also be used to order data. For example, `orderByCreatedAt` sorts data by createdAt field.
+ *      required: false
+ *      schema:
+ *        type: string
+ *        enum:
+ *          - orderByCreatedAt
+ *          - inQueue
+ *          - inProgress
+ *          - completed
  *  responses:
  *    Reconstruction:
  *      description: Reconstruction data in JSON response.
