@@ -34,6 +34,31 @@ router.get('/', ReconstructionController.index);
 /**
  * @swagger
  *
+ * /reconstructions/batch:
+ *  get:
+ *    description: End point to fetch reconstructions batch for processing.
+ *                 Also updates the reconstructions to in progress state.
+ *    parameters:
+ *      - $ref: '#/components/parameters/size'
+ *    responses:
+ *      200:
+ *        description: A list of queued reconstructions to process.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Reconstruction'
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.get('/batch', ReconstructionController.reconstructionBatch);
+
+/**
+ * @swagger
+ *
  * /reconstructions/{id}:
  *  get:
  *    description: End point to fetch details of a reconstruction.

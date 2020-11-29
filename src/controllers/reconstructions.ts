@@ -78,6 +78,38 @@ export async function reconstruction(
   }
 }
 
+export async function reconstructionBatch(
+  req: Request,
+  res: Response<Reconstruction[]>,
+  next: NextFunction
+) {
+  try {
+    let reconstruction:
+      | Reconstruction[]
+      | undefined = await reconstructionService.fetchReconstructionBatch(
+      +req.params.size || 10
+    );
+
+    if (reconstruction) {
+      res.json(reconstruction);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstructions not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while fetching reconstructions.',
+      ...err,
+    });
+  }
+}
+
 export async function userReconstruction(
   req: Request,
   res: Response<PaginatedResult<Reconstruction>>,
@@ -165,4 +197,5 @@ export default {
   create,
   reconstruction,
   userReconstruction,
+  reconstructionBatch,
 };
