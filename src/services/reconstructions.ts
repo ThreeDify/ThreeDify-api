@@ -100,6 +100,13 @@ export async function addImages(
     .first();
 }
 
+export async function setState(
+  reconstruction: Reconstruction,
+  state: ReconstructionState
+) {
+  await reconstruction.$query().patch({ state: state });
+}
+
 export async function insertReconstruction(
   reconstruction: Partial<Reconstruction>
 ): Promise<Reconstruction> {
@@ -113,6 +120,7 @@ export async function insertReconstruction(
 }
 
 export default {
+  setState,
   addImages,
   insertReconstruction,
   fetchAllReconstructions,

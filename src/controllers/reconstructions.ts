@@ -7,6 +7,7 @@ import PaginatedResult from '../domain/PaginatedResult';
 import { getPaginationQuery } from '../utils/pagination';
 import NewReconstruction from '../domain/NewReconstruction';
 import reconstructionService from '../services/reconstructions';
+import ReconstructionState from '../domain/ReconstructionState';
 import { AuthRequestWithFiles } from '../middlewares/uploadImage';
 import ReconstructionCreationResponse from '../domain/ReconstructionCreationResponse';
 
@@ -73,6 +74,46 @@ export async function reconstruction(
     next({
       status: 500,
       message: 'Error occurred while fetching reconstruction.',
+      ...err,
+    });
+  }
+}
+
+export async function reconstructionFailed(
+  req: Request,
+  res: Response<Reconstruction>,
+  next: NextFunction
+) {
+  try {
+    let reconstruction:
+      | Reconstruction
+      | undefined = await reconstructionService.fetchReconstructionById(
+      +req.params.id
+    );
+
+    if (reconstruction) {
+      // TODO: Add process logs for the reconstruction and failed state.
+
+      debug('Setting state of reconstruction to in queue.');
+      await reconstructionService.setState(
+        reconstruction,
+        ReconstructionState.INQUEUE
+      );
+
+      res.sendStatus(200);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstruction not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while updating reconstruction state.',
       ...err,
     });
   }
@@ -198,4 +239,5 @@ export default {
   reconstruction,
   userReconstruction,
   reconstructionBatch,
+  reconstructionFailed,
 };

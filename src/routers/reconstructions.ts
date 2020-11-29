@@ -35,7 +35,7 @@ router.get('/', ReconstructionController.index);
  * @swagger
  *
  * /reconstructions/batch:
- *  get:
+ *  put:
  *    description: End point to fetch reconstructions batch for processing.
  *                 Also updates the reconstructions to in progress state.
  *    parameters:
@@ -54,7 +54,7 @@ router.get('/', ReconstructionController.index);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/batch', ReconstructionController.reconstructionBatch);
+router.put('/batch', ReconstructionController.reconstructionBatch);
 
 /**
  * @swagger
@@ -75,6 +75,30 @@ router.get('/batch', ReconstructionController.reconstructionBatch);
  *        $ref: '#/components/responses/HTTPError'
  */
 router.get('/:id', ReconstructionController.reconstruction);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/{id}/failed:
+ *  put:
+ *    description: End point to set reconstruction state to failed. This changes the state to `IN QUEUE`.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          text/plain:
+ *            schema:
+ *              type: string
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.put('/:id/failed', ReconstructionController.reconstructionFailed);
 
 /**
  * @swagger
