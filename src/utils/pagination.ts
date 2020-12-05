@@ -51,12 +51,19 @@ export function getPaginationQuery(query: any): PaginationQuery {
 
 export async function applyPagination<T extends Model>(
   schema: QueryBuilder<T>,
-  query: PaginationQuery
+  query: PaginationQuery,
+  availableFilters?: string[]
 ): Promise<PaginatedResult<T> | undefined> {
+  let availableModelFilters = availableFilters || [];
+
   debug('Applying pagination.');
   const result: Page<T> = await schema
     .context({ sortOrder: query.order, queryString: query.q })
-    .modify(query.filters)
+    .modify(
+      query.filters.filter((filter) => {
+        return availableModelFilters.includes(filter);
+      })
+    )
     .page(query.page - 1, query.size);
 
   if (result.results.length > 0) {

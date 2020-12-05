@@ -16,10 +16,13 @@ export async function fetchAllReconstructions(
   debug('Fetching all reconstructions.');
 
   return await applyPagination(
-    Reconstruction.query().withGraphFetched(
-      '[createdByUser(defaultSelect), images.uploadedByUser(defaultSelect)]'
-    ),
-    query
+    Reconstruction.query()
+      .modify('defaultSelect')
+      .withGraphFetched(
+        '[createdByUser(defaultSelect), images.uploadedByUser(defaultSelect)]'
+      ),
+    query,
+    Reconstruction.filters
   );
 }
 
@@ -32,6 +35,7 @@ export async function fetchReconstructionBatch(
       const reconstructions:
         | Reconstruction[]
         | undefined = await Reconstruction.query(trx)
+        .modify('defaultSelect')
         .withGraphFetched('[images]')
         .context({ sortOrder: 'ASC' })
         .modify(['orderByCreatedAt', 'inQueue'])
@@ -59,11 +63,18 @@ export async function fetchReconstructionBatch(
 }
 
 export async function fetchReconstructionById(
-  id: number
+  id: number,
+  withReconstructionFile?: boolean
 ): Promise<Reconstruction | undefined> {
   debug('Fetching reconstruction with id: %d.', id);
 
+  let filters = ['defaultSelect'];
+  if (withReconstructionFile) {
+    filters.push('withReconstructionFile');
+  }
+
   return await Reconstruction.query()
+    .modify(filters)
     .where('id', '=', id)
     .withGraphFetched(
       '[createdByUser(defaultSelect), images.uploadedByUser(defaultSelect)]'
@@ -79,11 +90,13 @@ export async function fetchReconstructionByUserId(
 
   return await applyPagination(
     Reconstruction.query()
+      .modify('defaultSelect')
       .where('createdBy', '=', userId)
       .withGraphFetched(
         '[createdByUser(defaultSelect), images.uploadedByUser(defaultSelect)]'
       ),
-    query
+    query,
+    Reconstruction.filters
   );
 }
 
@@ -100,6 +113,16 @@ export async function addImages(
     .first();
 }
 
+export async function markAsCompleted(
+  reconstruction: Reconstruction,
+  reconstructionFile: string
+) {
+  await reconstruction.$query().patch({
+    reconstructionFile: reconstructionFile,
+    state: ReconstructionState.COMPLETED,
+  });
+}
+
 export async function setState(
   reconstruction: Reconstruction,
   state: ReconstructionState
@@ -114,6 +137,7 @@ export async function insertReconstruction(
 
   return await Reconstruction.query()
     .insertAndFetch(reconstruction)
+    .modify('defaultSelect')
     .withGraphFetched(
       '[createdByUser(defaultSelect), images.uploadedByUser(defaultSelect)]'
     );
@@ -122,6 +146,7 @@ export async function insertReconstruction(
 export default {
   setState,
   addImages,
+  markAsCompleted,
   insertReconstruction,
   fetchAllReconstructions,
   fetchReconstructionById,
