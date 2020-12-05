@@ -26,10 +26,10 @@ const TABLE_NAME: string = 'images';
  *          type: number
  *        uploadedByUser:
  *          $ref: '#/components/schemas/User'
- *        created_at:
+ *        createdAt:
  *          type: string
  *          format: date-time
- *        updated_at:
+ *        updatedAt:
  *          type: string
  *          format: date-time
  *  responses:

@@ -6,7 +6,9 @@ import { Options as SwaggerOptions } from 'swagger-jsdoc';
 
 import packageJson from '../package.json';
 
+import { SortOrder } from './domain/PaginationQuery';
 import GoogleAPIConfig from './domain/GoogleAPIConfig';
+import PaginationConfig from './domain/PaginationConfig';
 
 interface Config {
   port: number;
@@ -24,6 +26,7 @@ interface Config {
   accessTokenConfig: SignOptions;
   refreshTokenConfig: SignOptions;
   googleAPIConfig?: GoogleAPIConfig;
+  paginationConfig: PaginationConfig;
 }
 
 const config: Config = {
@@ -73,6 +76,10 @@ const config: Config = {
     redirect_url: process.env.GOOGLE_REDIRECT_URL || '',
     refresh_token: process.env.GOOGLE_REFRESH_TOKEN || '',
     upload_directory_id: process.env.GOOGLE_DRIVE_UPLOAD_FOLDER_ID || '',
+  },
+  paginationConfig: {
+    minPageSize: 10,
+    defaultOrder: SortOrder.ASC,
   },
 };
 
