@@ -8,8 +8,9 @@ import { getPaginationQuery } from '../utils/pagination';
 import NewReconstruction from '../domain/NewReconstruction';
 import reconstructionService from '../services/reconstructions';
 import ReconstructionState from '../domain/ReconstructionState';
-import { AuthRequestWithFiles } from '../middlewares/uploadImage';
+import { AuthRequestWithImages } from '../middlewares/uploadImage';
 import ReconstructionCreationResponse from '../domain/ReconstructionCreationResponse';
+import { AuthRequestWithReconstructionFile } from '../middlewares/uploadReconstruction';
 
 const debug: Debugger = Debug('threedify:controller:reconstructions');
 
@@ -53,6 +54,7 @@ export async function reconstruction(
   next: NextFunction
 ) {
   try {
+    debug('Fetching requested reconstruction: %d', +req.params.id);
     let reconstruction:
       | Reconstruction
       | undefined = await reconstructionService.fetchReconstructionById(
@@ -81,10 +83,11 @@ export async function reconstruction(
 
 export async function reconstructionFailed(
   req: Request,
-  res: Response<Reconstruction>,
+  res: Response,
   next: NextFunction
 ) {
   try {
+    debug('Fetching requested reconstruction: %d', +req.params.id);
     let reconstruction:
       | Reconstruction
       | undefined = await reconstructionService.fetchReconstructionById(
@@ -98,6 +101,49 @@ export async function reconstructionFailed(
       await reconstructionService.setState(
         reconstruction,
         ReconstructionState.INQUEUE
+      );
+
+      res.sendStatus(200);
+      return;
+    }
+
+    next({
+      status: 404,
+      message: 'Reconstruction not found.',
+    });
+  } catch (err) {
+    debug('ERROR: %O', err);
+
+    next({
+      status: 500,
+      message: 'Error occurred while updating reconstruction state.',
+      ...err,
+    });
+  }
+}
+
+export async function reconstructionCompleted(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const authReq: AuthRequestWithReconstructionFile = req as AuthRequestWithReconstructionFile;
+
+  try {
+    debug('Fetching requested reconstruction: %d', +req.params.id);
+    let reconstruction:
+      | Reconstruction
+      | undefined = await reconstructionService.fetchReconstructionById(
+      +req.params.id
+    );
+
+    if (reconstruction) {
+      // TODO: Add process logs for the reconstruction and completed state.
+
+      debug('Setting state of reconstruction to completed.');
+      await reconstructionService.markAsCompleted(
+        reconstruction,
+        authReq.reconstructionFileName
       );
 
       res.sendStatus(200);
@@ -191,11 +237,11 @@ export async function create(
   res: Response<ReconstructionCreationResponse>,
   next: NextFunction
 ) {
-  const authReq: AuthRequestWithFiles<
+  const authReq: AuthRequestWithImages<
     {},
     ReconstructionCreationResponse,
     NewReconstruction
-  > = req as AuthRequestWithFiles<
+  > = req as AuthRequestWithImages<
     {},
     ReconstructionCreationResponse,
     NewReconstruction
@@ -240,4 +286,5 @@ export default {
   userReconstruction,
   reconstructionBatch,
   reconstructionFailed,
+  reconstructionCompleted,
 };

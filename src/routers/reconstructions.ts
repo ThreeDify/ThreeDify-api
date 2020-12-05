@@ -3,11 +3,15 @@ import { Router } from 'express';
 import { uploadImages } from '../middlewares/uploadImage';
 import authenticateUser from '../middlewares/authenticateUser';
 import ReconstructionController from '../controllers/reconstructions';
+import { uploadReconstruction } from '../middlewares/uploadReconstruction';
 import validateNewReconstruction from '../middlewares/validateNewReconstruction';
 
 const router: Router = Router();
 
 const imageUploadMiddlewares = uploadImages('images');
+const reconstructionUploadMiddlewares = uploadReconstruction(
+  'reconstruction_file'
+);
 
 /**
  * @swagger
@@ -30,6 +34,55 @@ const imageUploadMiddlewares = uploadImages('images');
  *        $ref: '#/components/responses/HTTPError'
  */
 router.get('/', ReconstructionController.index);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/{id}:
+ *  get:
+ *    description: End point to fetch details of a reconstruction.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction to fetch.
+ *    responses:
+ *      200:
+ *        $ref: '#/components/responses/Reconstruction'
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.get('/:id', ReconstructionController.reconstruction);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/create:
+ *  post:
+ *    description: End point to create new reconstruction.
+ *    security:
+ *      - Authentication: []
+ *    requestBody:
+ *      $ref: '#/components/requestBodies/NewReconstruction'
+ *    responses:
+ *      200:
+ *        $ref: '#/components/responses/ReconstructionCreationResponse'
+ *      401:
+ *        $ref: '#/components/responses/HTTPError'
+ *      422:
+ *        $ref: '#/components/responses/ValidationErrorResponse'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.post(
+  '/create',
+  authenticateUser,
+  imageUploadMiddlewares[0],
+  validateNewReconstruction,
+  imageUploadMiddlewares[1],
+  ReconstructionController.create
+);
 
 /**
  * @swagger
@@ -59,26 +112,6 @@ router.put('/batch', ReconstructionController.reconstructionBatch);
 /**
  * @swagger
  *
- * /reconstructions/{id}:
- *  get:
- *    description: End point to fetch details of a reconstruction.
- *    parameters:
- *      - name: id
- *        in: path
- *        description: Id of reconstruction to fetch.
- *    responses:
- *      200:
- *        $ref: '#/components/responses/Reconstruction'
- *      404:
- *        $ref: '#/components/responses/HTTPError'
- *      500:
- *        $ref: '#/components/responses/HTTPError'
- */
-router.get('/:id', ReconstructionController.reconstruction);
-
-/**
- * @swagger
- *
  * /reconstructions/{id}/failed:
  *  put:
  *    description: End point to set reconstruction state to failed. This changes the state to `IN QUEUE`.
@@ -103,13 +136,26 @@ router.put('/:id/failed', ReconstructionController.reconstructionFailed);
 /**
  * @swagger
  *
- * /reconstructions/create:
- *  post:
- *    description: End point to create new reconstruction.
- *    security:
- *      - Authentication: []
+ * /reconstructions/{id}/success:
+ *  put:
+ *    description: End point to set reconstruction state to completed. This expects a reconstruction file (.ply).
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
  *    requestBody:
- *      $ref: '#/components/requestBodies/NewReconstruction'
+ *      description:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - reconstruction_file
+ *            properties:
+ *              reconstruction_file:
+ *                type: string
+ *                format: binary
  *    responses:
  *      200:
  *        $ref: '#/components/responses/ReconstructionCreationResponse'
@@ -120,13 +166,10 @@ router.put('/:id/failed', ReconstructionController.reconstructionFailed);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.post(
-  '/create',
-  authenticateUser,
-  imageUploadMiddlewares[0],
-  validateNewReconstruction,
-  imageUploadMiddlewares[1],
-  ReconstructionController.create
+router.put(
+  '/:id/success',
+  reconstructionUploadMiddlewares,
+  ReconstructionController.reconstructionCompleted
 );
 
 export default router;
