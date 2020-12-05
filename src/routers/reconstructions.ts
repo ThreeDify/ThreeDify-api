@@ -58,6 +58,34 @@ router.get('/:id', ReconstructionController.reconstruction);
 /**
  * @swagger
  *
+ * /reconstructions/{id}/reconstructionFile:
+ *  get:
+ *    description: End point to fetch reconstruction file.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    responses:
+ *      200:
+ *        description: Reconstruction file.
+ *        content:
+ *          application/octet-stream:
+ *            schema:
+ *               type: string
+ *               format: binary
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.get(
+  '/:id/reconstructionFile',
+  ReconstructionController.reconstructionFile
+);
+
+/**
+ * @swagger
+ *
  * /reconstructions/create:
  *  post:
  *    description: End point to create new reconstruction.
