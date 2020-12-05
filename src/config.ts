@@ -73,7 +73,7 @@ const config: Config = {
   },
   supportedMimeTypes: {
     image: ['image/jpeg', 'image/png'],
-    reconstruction: ['application/octet-stream'],
+    reconstruction: ['text/plain'],
   },
   uploadDirectory: resolve(__dirname, '../uploads'),
   multerConfig: {

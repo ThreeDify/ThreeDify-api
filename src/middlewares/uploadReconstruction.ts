@@ -5,7 +5,7 @@ import { ParamsDictionary, Query } from 'express-serve-static-core';
 import config from '../config';
 import { single } from '../utils/multer';
 import { upload } from '../utils/uploads';
-import { AuthenticatedRequest } from './authenticate';
+import { AuthenticatedRequest } from './authenticateUser';
 import {
   ValidationErrorItem,
   ValidationErrorResponse,
