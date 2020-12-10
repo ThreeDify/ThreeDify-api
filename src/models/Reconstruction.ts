@@ -91,6 +91,12 @@ export class Reconstruction extends Model {
 
   static get modifiers() {
     return {
+      search(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+        const q = builder.context().queryString;
+
+        builder.where(ref('name'), 'like', `%${q}%`);
+      },
       inQueue(builder: QueryBuilder<Reconstruction>) {
         const { ref } = Reconstruction;
 
