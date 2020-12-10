@@ -16,6 +16,7 @@ const imageUploadMiddlewares = uploadImages('images');
  *  get:
  *    description: End point to fetch all reconstructions.
  *    parameters:
+ *      - $ref: '#/components/parameters/q'
  *      - $ref: '#/components/parameters/page'
  *      - $ref: '#/components/parameters/size'
  *      - $ref: '#/components/parameters/reconstruction_filters'
