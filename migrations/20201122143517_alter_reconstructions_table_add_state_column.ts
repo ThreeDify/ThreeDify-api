@@ -21,4 +21,6 @@ export async function down(knex: Knex): Promise<void> {
       table.dropColumn('state');
     }
   );
+
+  await knex.schema.raw('DROP TYPE "ReconstructionState";');
 }
