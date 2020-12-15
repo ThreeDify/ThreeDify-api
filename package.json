@@ -4,6 +4,12 @@
   "description": "REST API for ThreeDify",
   "scripts": {
     "build": "tsc -p .",
+    "migrate:up": "knex migrate:up",
+    "migrate:list": "knex migrate:list",
+    "migrate:down": "knex migrate:down",
+    "migrate:make": "knex migrate:make",
+    "migrate:latest": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
     "start": "node -r dotenv/config dist/src/index.js",
     "start:dev": "nodemon -r dotenv/config src/index.ts",
     "lint": "pretty-quick --check --pattern \"src/**/*\" && eslint",
