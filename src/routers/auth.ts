@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
 import AuthController from '../controllers/auth';
-import authenticate from '../middlewares/authenticate';
 import validateNewUser from '../middlewares/validateNewUser';
+import authenticateUser from '../middlewares/authenticateUser';
 import checkUniqueEmail from '../middlewares/checkUniqueEmail';
 import checkUniqueUsername from '../middlewares/checkUniqueUsername';
 import validateLoginCredential from '../middlewares/validateLoginCredential';
@@ -71,7 +71,7 @@ router.post('/login', validateLoginCredential, AuthController.login);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.delete('/logout', authenticate, AuthController.logout);
+router.delete('/logout', authenticateUser, AuthController.logout);
 
 /**
  * @swagger

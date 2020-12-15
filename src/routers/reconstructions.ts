@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import authenticate from '../middlewares/authenticate';
 import { uploadImages } from '../middlewares/uploadImage';
+import authenticateUser from '../middlewares/authenticateUser';
 import ReconstructionController from '../controllers/reconstructions';
 import validateNewReconstruction from '../middlewares/validateNewReconstruction';
 
@@ -73,7 +73,7 @@ router.get('/:id', ReconstructionController.reconstruction);
  */
 router.post(
   '/create',
-  authenticate,
+  authenticateUser,
   imageUploadMiddlewares[0],
   validateNewReconstruction,
   imageUploadMiddlewares[1],

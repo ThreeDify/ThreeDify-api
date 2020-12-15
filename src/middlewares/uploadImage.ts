@@ -6,7 +6,7 @@ import Image from '../models/Image';
 import { upload } from '../utils/uploads';
 import imageService from '../services/images';
 import { multiple, single } from '../utils/multer';
-import { AuthenticatedRequest } from './authenticate';
+import { AuthenticatedRequest } from './authenticateUser';
 import {
   ValidationErrorItem,
   ValidationErrorResponse,
