@@ -13,9 +13,10 @@
     "start": "node -r dotenv/config dist/src/index.js",
     "start:dev": "nodemon -r dotenv/config src/index.ts",
     "lint": "pretty-quick --check --pattern \"src/**/*\" && eslint",
+    "script:generateApp": "ts-node -r dotenv/config scripts/generateApp.ts",
     "lint:fix": "pretty-quick --write  --pattern \"src/**/*\" && eslint --fix",
-    "listDriveFiles": "ts-node -r dotenv/config scripts/listDriveFiles.ts",
-    "generateGoogleToken": "ts-node -r dotenv/config scripts/generateGoogleToken.ts"
+    "script:listDriveFiles": "ts-node -r dotenv/config scripts/listDriveFiles.ts",
+    "script:generateGoogleToken": "ts-node -r dotenv/config scripts/generateGoogleToken.ts"
   },
   "private": "true",
   "license": "MIT",
