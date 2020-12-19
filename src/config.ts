@@ -11,6 +11,7 @@ import { SortOrder } from './domain/PaginationQuery';
 import GoogleAPIConfig from './domain/GoogleAPIConfig';
 import PaginationConfig from './domain/PaginationConfig';
 import { AvailableStorageAPI } from './domain/StorageAPI';
+import SupportedMimeTypes from './domain/SupportedMimeTypes';
 
 interface Config {
   port: number;
@@ -22,13 +23,13 @@ interface Config {
   accessTokenSecret: string;
   refreshTokenSecret: string;
   multerConfig: MulterOptions;
-  supportedMimeTypes: string[];
   swaggerConfig: SwaggerOptions;
   accessTokenConfig: SignOptions;
   storageAPI: AvailableStorageAPI;
   refreshTokenConfig: SignOptions;
   googleAPIConfig?: GoogleAPIConfig;
   paginationConfig: PaginationConfig;
+  supportedMimeTypes: SupportedMimeTypes;
 }
 
 const config: Config = {
@@ -70,7 +71,10 @@ const config: Config = {
       }
     },
   },
-  supportedMimeTypes: ['image/jpeg', 'image/png'],
+  supportedMimeTypes: {
+    image: ['image/jpeg', 'image/png'],
+    reconstruction: ['text/plain'],
+  },
   uploadDirectory: resolve(__dirname, '../uploads'),
   multerConfig: {
     dest: resolve(__dirname, '../uploads', 'tmp'),

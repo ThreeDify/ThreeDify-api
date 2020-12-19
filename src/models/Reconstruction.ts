@@ -1,7 +1,8 @@
-import { Model, QueryBuilder } from 'objection';
+import { QueryBuilder } from 'objection';
 
 import User from './User';
 import Image from './Image';
+import BaseModel from './BaseModel';
 import ReconstructionState from '../domain/ReconstructionState';
 
 const TABLE_NAME: string = 'reconstructions';
@@ -16,6 +17,11 @@ const TABLE_NAME: string = 'reconstructions';
  *      required:
  *        - id
  *        - name
+ *        - state
+ *        - createdBy
+ *        - createdByUser
+ *        - createdAt
+ *        - updatedAt
  *      properties:
  *        id:
  *          type: number
@@ -73,11 +79,12 @@ const TABLE_NAME: string = 'reconstructions';
  *                    items:
  *                      $ref: '#/components/schemas/Reconstruction'
  */
-export class Reconstruction extends Model {
+export class Reconstruction extends BaseModel {
   id!: number;
   name!: string;
   createdBy!: number;
   state!: ReconstructionState;
+  reconstructionFile?: string;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -96,6 +103,21 @@ export class Reconstruction extends Model {
         const q = builder.context().queryString;
 
         builder.where(ref('name'), 'like', `%${q}%`);
+      },
+      defaultSelect(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+        builder.select(
+          ref('id'),
+          ref('name'),
+          ref('state'),
+          ref('createdBy'),
+          ref('createdAt'),
+          ref('updatedAt')
+        );
+      },
+      withReconstructionFile(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+        builder.select(ref('reconstructionFile'));
       },
       inQueue(builder: QueryBuilder<Reconstruction>) {
         const { ref } = Reconstruction;
@@ -120,10 +142,14 @@ export class Reconstruction extends Model {
     };
   }
 
+  static get filters(): string[] {
+    return ['search', 'inQueue', 'inProgress', 'completed', 'orderByCreatedAt'];
+  }
+
   static get relationMappings() {
     return {
       createdByUser: {
-        relation: Model.BelongsToOneRelation,
+        relation: BaseModel.BelongsToOneRelation,
         modelClass: User,
         join: {
           from: 'reconstructions.createdBy',
@@ -131,7 +157,7 @@ export class Reconstruction extends Model {
         },
       },
       images: {
-        relation: Model.ManyToManyRelation,
+        relation: BaseModel.ManyToManyRelation,
         modelClass: Image,
         join: {
           from: 'reconstructions.id',

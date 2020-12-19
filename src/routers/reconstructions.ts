@@ -3,11 +3,15 @@ import { Router } from 'express';
 import { uploadImages } from '../middlewares/uploadImage';
 import authenticateUser from '../middlewares/authenticateUser';
 import ReconstructionController from '../controllers/reconstructions';
+import { uploadReconstruction } from '../middlewares/uploadReconstruction';
 import validateNewReconstruction from '../middlewares/validateNewReconstruction';
 
 const router: Router = Router();
 
 const imageUploadMiddlewares = uploadImages('images');
+const reconstructionUploadMiddlewares = uploadReconstruction(
+  'reconstruction_file'
+);
 
 /**
  * @swagger
@@ -54,6 +58,34 @@ router.get('/:id', ReconstructionController.reconstruction);
 /**
  * @swagger
  *
+ * /reconstructions/{id}/reconstructionFile:
+ *  get:
+ *    description: End point to fetch reconstruction file.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    responses:
+ *      200:
+ *        description: Reconstruction file.
+ *        content:
+ *          application/octet-stream:
+ *            schema:
+ *               type: string
+ *               format: binary
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.get(
+  '/:id/reconstructionFile',
+  ReconstructionController.reconstructionFile
+);
+
+/**
+ * @swagger
+ *
  * /reconstructions/create:
  *  post:
  *    description: End point to create new reconstruction.
@@ -78,6 +110,94 @@ router.post(
   validateNewReconstruction,
   imageUploadMiddlewares[1],
   ReconstructionController.create
+);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/batch:
+ *  put:
+ *    description: End point to fetch reconstructions batch for processing.
+ *                 Also updates the reconstructions to in progress state.
+ *    parameters:
+ *      - $ref: '#/components/parameters/size'
+ *    responses:
+ *      200:
+ *        description: A list of queued reconstructions to process.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Reconstruction'
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.put('/batch', ReconstructionController.reconstructionBatch);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/{id}/failed:
+ *  put:
+ *    description: End point to set reconstruction state to failed. This changes the state to `IN QUEUE`.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          text/plain:
+ *            schema:
+ *              type: string
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.put('/:id/failed', ReconstructionController.reconstructionFailed);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/{id}/success:
+ *  put:
+ *    description: End point to set reconstruction state to completed. This expects a reconstruction file (.ply).
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    requestBody:
+ *      description:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - reconstruction_file
+ *            properties:
+ *              reconstruction_file:
+ *                type: string
+ *                format: binary
+ *    responses:
+ *      200:
+ *        $ref: '#/components/responses/ReconstructionCreationResponse'
+ *      401:
+ *        $ref: '#/components/responses/HTTPError'
+ *      422:
+ *        $ref: '#/components/responses/ValidationErrorResponse'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.put(
+  '/:id/success',
+  reconstructionUploadMiddlewares,
+  ReconstructionController.reconstructionCompleted
 );
 
 export default router;

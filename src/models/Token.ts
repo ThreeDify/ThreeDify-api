@@ -1,10 +1,9 @@
-import { Model } from 'objection';
-
 import User from './User';
+import BaseModel from './BaseModel';
 
 const TABLE_NAME: string = 'tokens';
 
-export class Token extends Model {
+export class Token extends BaseModel {
   id!: number;
   userId!: number;
   accessToken!: string;
@@ -22,7 +21,7 @@ export class Token extends Model {
   static get relationMappings() {
     return {
       user: {
-        relation: Model.BelongsToOneRelation,
+        relation: BaseModel.BelongsToOneRelation,
         modelClass: User,
         join: {
           from: 'tokens.userId',
