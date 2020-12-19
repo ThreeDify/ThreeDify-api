@@ -16,7 +16,16 @@ export async function insertApp(app: Partial<App>): Promise<App> {
   return await App.query().insert(app);
 }
 
+export async function fetchAllowedDomains(): Promise<RegExp[]> {
+  debug('Fetching allowed domains..');
+
+  return (await App.query().select('domain')).map(
+    (app) => new RegExp(app.domain)
+  );
+}
+
 export default {
   insertApp,
   fetchAppByKey,
+  fetchAllowedDomains,
 };
