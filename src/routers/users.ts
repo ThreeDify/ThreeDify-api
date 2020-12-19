@@ -4,7 +4,7 @@ import { sendStatus } from '../utils/response';
 
 import UserController from '../controllers/users';
 
-import authenticate from '../middlewares/authenticate';
+import authenticateUser from '../middlewares/authenticateUser';
 import checkUniqueEmail from '../middlewares/checkUniqueEmail';
 import checkUniqueUsername from '../middlewares/checkUniqueUsername';
 import ReconstructionController from '../controllers/reconstructions';
@@ -27,7 +27,7 @@ const router: Router = Router();
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/me', authenticate, UserController.me);
+router.get('/me', authenticateUser, UserController.me);
 
 /**
  * @swagger
@@ -47,7 +47,7 @@ router.get('/me', authenticate, UserController.me);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/', authenticate, UserController.index);
+router.get('/', authenticateUser, UserController.index);
 
 /**
  * @swagger
@@ -71,7 +71,7 @@ router.get('/', authenticate, UserController.index);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/:userId(\\d+)', authenticate, UserController.user);
+router.get('/:userId(\\d+)', authenticateUser, UserController.user);
 
 /**
  * @swagger
@@ -102,7 +102,7 @@ router.get('/:userId(\\d+)', authenticate, UserController.user);
  */
 router.get(
   '/:userId(\\d+)/reconstructions',
-  authenticate,
+  authenticateUser,
   ReconstructionController.userReconstruction
 );
 
