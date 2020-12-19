@@ -3,6 +3,12 @@
  *
  * components:
  *  parameters:
+ *    q:
+ *      in: query
+ *      name: q
+ *      description: The search query string.
+ *      schema:
+ *        type: string
  *    page:
  *      in: query
  *      name: page
@@ -44,6 +50,7 @@ export enum SortOrder {
 }
 
 export interface PaginationQuery {
+  q?: string;
   page: number;
   size: number;
   filters: string[];

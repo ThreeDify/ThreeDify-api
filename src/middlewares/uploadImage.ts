@@ -2,19 +2,20 @@ import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 
+import config from '../config';
 import Image from '../models/Image';
 import { upload } from '../utils/uploads';
 import imageService from '../services/images';
 import { multiple, single } from '../utils/multer';
-import { AuthenticatedRequest } from './authenticate';
+import { AuthenticatedRequest } from './authenticateUser';
 import {
   ValidationErrorItem,
   ValidationErrorResponse,
 } from '../domain/validations';
 
-const debug: Debugger = Debug('threedify:services:uploadImage');
+const debug: Debugger = Debug('threedify:middleware:uploadImage');
 
-export interface RequestWithFiles<
+export interface RequestWithImages<
   P = ParamsDictionary,
   ResBody = any,
   ReqBody = any,
@@ -24,21 +25,21 @@ export interface RequestWithFiles<
   fileValidationErrors: ValidationErrorItem[];
 }
 
-export type AuthRequestWithFiles<
+export type AuthRequestWithImages<
   P = ParamsDictionary,
   ResBody = any,
   ReqBody = any,
   ReqQuery = Query
 > = AuthenticatedRequest<P, ResBody, ReqBody, ReqQuery> &
-  RequestWithFiles<P, ResBody, ReqBody, ReqQuery>;
+  RequestWithImages<P, ResBody, ReqBody, ReqQuery>;
 
 async function uploadImage(
   file: Express.Multer.File,
   key: string,
-  authReq: AuthRequestWithFiles
+  authReq: AuthRequestWithImages
 ) {
-  debug('Uploading file: %s', file.originalname);
-  const fileName: string = await upload(file);
+  debug('Uploading image: %s', file.originalname);
+  const fileName: string = await upload(file, config.supportedMimeTypes.image);
 
   authReq.images = authReq.images || [];
   authReq.fileValidationErrors = authReq.fileValidationErrors || [];
@@ -72,7 +73,7 @@ export function uploadSingleImage(key: string) {
       res: Response<ValidationErrorResponse>,
       next: NextFunction
     ) => {
-      const authReq: AuthRequestWithFiles = req as AuthRequestWithFiles;
+      const authReq: AuthRequestWithImages = req as AuthRequestWithImages;
       try {
         debug('Uploading file for: %s', key);
         const file: Express.Multer.File = req.file;
@@ -97,7 +98,7 @@ export function uploadSingleImage(key: string) {
           errors: [
             {
               [key]: {
-                message: 'Image file not uploaded.',
+                message: 'Image not uploaded.',
               },
             },
           ],
@@ -106,7 +107,7 @@ export function uploadSingleImage(key: string) {
         debug('%O', err);
         next({
           status: 500,
-          message: 'Error occurred while uploading file.',
+          message: 'Error occurred while uploading image.',
           err: err,
         });
       }
@@ -122,7 +123,7 @@ export function uploadImages(key: string) {
       res: Response<ValidationErrorResponse>,
       next: NextFunction
     ) => {
-      const authReq: AuthRequestWithFiles = req as AuthRequestWithFiles;
+      const authReq: AuthRequestWithImages = req as AuthRequestWithImages;
       try {
         debug('Uploading files for: %s', key);
         if (req.files.length > 0) {
@@ -146,7 +147,7 @@ export function uploadImages(key: string) {
           errors: [
             {
               [key]: {
-                message: 'Image files not uploaded.',
+                message: 'Images not uploaded.',
               },
             },
           ],
@@ -155,7 +156,7 @@ export function uploadImages(key: string) {
         debug('%O', err);
         next({
           status: 500,
-          message: 'Error occurred while uploading file.',
+          message: 'Error occurred while uploading image.',
           err: err,
         });
       }

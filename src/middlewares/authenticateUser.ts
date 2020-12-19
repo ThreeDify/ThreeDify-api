@@ -3,10 +3,10 @@ import { NextFunction, Request, Response } from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 
 import User from '../models/User';
-import authService from '../services/auth';
 import { TokenCredential } from '../domain/login';
+import userAuthService from '../services/userAuth';
 
-const debug: Debugger = Debug('threedify:middleware:authenticate');
+const debug: Debugger = Debug('threedify:middleware:authenticateUser');
 
 export interface AuthenticatedRequest<
   P = ParamsDictionary,
@@ -18,12 +18,13 @@ export interface AuthenticatedRequest<
   tokenCred: TokenCredential;
 }
 
-export async function authenticate(
+export async function authenticateUser(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
+    debug('Authenticating User...');
     const authReq: AuthenticatedRequest = req as AuthenticatedRequest;
     const authCode: string | undefined = authReq.header('authorization');
 
@@ -34,7 +35,7 @@ export async function authenticate(
       debug('Check if access token exists.');
       if (authType.toLowerCase() === 'bearer' && accessToken) {
         debug('Authenticate with access token.');
-        const user: User | undefined = await authService.authenticate({
+        const user: User | undefined = await userAuthService.authenticate({
           accessToken,
         });
 
@@ -65,4 +66,4 @@ export async function authenticate(
   }
 }
 
-export default authenticate;
+export default authenticateUser;

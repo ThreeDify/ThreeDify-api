@@ -4,12 +4,19 @@
   "description": "REST API for ThreeDify",
   "scripts": {
     "build": "tsc -p .",
+    "migrate:up": "knex migrate:up",
+    "migrate:list": "knex migrate:list",
+    "migrate:down": "knex migrate:down",
+    "migrate:make": "knex migrate:make",
+    "migrate:latest": "knex migrate:latest",
+    "migrate:rollback": "knex migrate:rollback",
     "start": "node -r dotenv/config dist/src/index.js",
     "start:dev": "nodemon -r dotenv/config src/index.ts",
     "lint": "pretty-quick --check --pattern \"src/**/*\" && eslint",
+    "script:generateApp": "ts-node -r dotenv/config scripts/generateApp.ts",
     "lint:fix": "pretty-quick --write  --pattern \"src/**/*\" && eslint --fix",
-    "listDriveFiles": "ts-node -r dotenv/config scripts/listDriveFiles.ts",
-    "generateGoogleToken": "ts-node -r dotenv/config scripts/generateGoogleToken.ts"
+    "script:listDriveFiles": "ts-node -r dotenv/config scripts/listDriveFiles.ts",
+    "script:generateGoogleToken": "ts-node -r dotenv/config scripts/generateGoogleToken.ts"
   },
   "private": "true",
   "license": "MIT",
@@ -30,6 +37,7 @@
     "@types/range-parser": "^1.2.3",
     "@types/swagger-jsdoc": "^3.0.2",
     "@types/swagger-ui-express": "^4.1.2",
+    "@types/uuid": "^8.3.0",
     "@typescript-eslint/eslint-plugin": "^3.8.0",
     "@typescript-eslint/parser": "^3.8.0",
     "eslint": "^7.6.0",
@@ -62,7 +70,8 @@
     "pg": "^8.3.3",
     "range-parser": "^1.2.1",
     "swagger-jsdoc": "^4.3.0",
-    "swagger-ui-express": "^4.1.4"
+    "swagger-ui-express": "^4.1.4",
+    "uuid": "^8.3.2"
   },
   "husky": {
     "hooks": {

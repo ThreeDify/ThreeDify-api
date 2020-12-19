@@ -6,27 +6,30 @@ import { Options as SwaggerOptions } from 'swagger-jsdoc';
 
 import packageJson from '../package.json';
 
+import apps from './services/apps';
 import { SortOrder } from './domain/PaginationQuery';
 import GoogleAPIConfig from './domain/GoogleAPIConfig';
 import PaginationConfig from './domain/PaginationConfig';
+import { AvailableStorageAPI } from './domain/StorageAPI';
+import SupportedMimeTypes from './domain/SupportedMimeTypes';
 
 interface Config {
   port: number;
   baseUrl: string;
   saltRound: number;
-  storageAPI: string;
   corsConfig: CorsOptions;
   uploadDirectory: string;
   requestLogFormat: string;
   accessTokenSecret: string;
   refreshTokenSecret: string;
   multerConfig: MulterOptions;
-  supportedMimeTypes: string[];
   swaggerConfig: SwaggerOptions;
   accessTokenConfig: SignOptions;
+  storageAPI: AvailableStorageAPI;
   refreshTokenConfig: SignOptions;
   googleAPIConfig?: GoogleAPIConfig;
   paginationConfig: PaginationConfig;
+  supportedMimeTypes: SupportedMimeTypes;
 }
 
 const config: Config = {
@@ -34,7 +37,9 @@ const config: Config = {
   requestLogFormat: 'tiny',
   baseUrl: process.env.BASE_URL || '',
   port: +(process.env?.PORT || 3000),
-  storageAPI: process.env.STORAGE_API || 'local',
+  storageAPI:
+    (process.env.STORAGE_API?.trim().toUpperCase() as AvailableStorageAPI) ||
+    AvailableStorageAPI.LOCAL,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET || '',
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET || '',
   accessTokenConfig: {
@@ -46,10 +51,30 @@ const config: Config = {
     expiresIn: 7 * 24 * 60 * 60,
   },
   corsConfig: {
-    origin: process.env.APP_BASE_URL,
     credentials: true,
+    origin: async (origin, callback) => {
+      if (!origin) {
+        callback(null, false);
+        return;
+      }
+      try {
+        const domains = await apps.fetchAllowedDomains();
+        for (let domain of domains) {
+          if (domain.test(origin)) {
+            callback(null, true);
+            return;
+          }
+        }
+        callback(null, false);
+      } catch (err) {
+        callback(err, false);
+      }
+    },
   },
-  supportedMimeTypes: ['image/jpeg', 'image/png'],
+  supportedMimeTypes: {
+    image: ['image/jpeg', 'image/png'],
+    reconstruction: ['text/plain'],
+  },
   uploadDirectory: resolve(__dirname, '../uploads'),
   multerConfig: {
     dest: resolve(__dirname, '../uploads', 'tmp'),

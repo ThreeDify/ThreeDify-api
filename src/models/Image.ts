@@ -1,5 +1,5 @@
-import { Model } from 'objection';
 import User from './User';
+import BaseModel from './BaseModel';
 
 const TABLE_NAME: string = 'images';
 
@@ -48,7 +48,7 @@ const TABLE_NAME: string = 'images';
  *            items:
  *              $ref: '#/components/schemas/Image'
  */
-export class Image extends Model {
+export class Image extends BaseModel {
   id!: number;
   fileName!: string;
   mimetype!: string;
@@ -66,7 +66,7 @@ export class Image extends Model {
   static get relationMappings() {
     return {
       uploadedByUser: {
-        relation: Model.BelongsToOneRelation,
+        relation: BaseModel.BelongsToOneRelation,
         modelClass: User,
         join: {
           from: 'images.uploadedBy',

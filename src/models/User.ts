@@ -1,4 +1,6 @@
-import { Model, QueryBuilder } from 'objection';
+import { QueryBuilder } from 'objection';
+
+import BaseModel from './BaseModel';
 
 const TABLE_NAME: string = 'users';
 
@@ -51,7 +53,7 @@ const TABLE_NAME: string = 'users';
  *            items:
  *              $ref: '#/components/schemas/User'
  */
-export class User extends Model {
+export class User extends BaseModel {
   id!: number;
   email!: string;
   username!: string;

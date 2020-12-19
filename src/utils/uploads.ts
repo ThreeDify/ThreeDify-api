@@ -14,8 +14,11 @@ function getRandomString(): string {
   return randomBytes(20).toString('hex');
 }
 
-export function isFileSupported(mimeType: string): boolean {
-  return config.supportedMimeTypes.includes(mimeType);
+export function isFileSupported(
+  mimeType: string,
+  supportedMimeTypes: string[]
+): boolean {
+  return supportedMimeTypes.includes(mimeType);
 }
 
 export function getUploadDirectory(): string {
@@ -56,12 +59,15 @@ export function cleanUp(tmpFilePath: string) {
   unlinkSync(tmpFilePath);
 }
 
-export async function upload(file: Express.Multer.File): Promise<string> {
+export async function upload(
+  file: Express.Multer.File,
+  supportedMimeTypes: string[]
+): Promise<string> {
   debug('Uploading file.');
   let fileName: string = '';
   let filePath: string = '';
 
-  if (isFileSupported(file.mimetype)) {
+  if (isFileSupported(file.mimetype, supportedMimeTypes)) {
     [fileName, filePath] = await getFileName(file.mimetype);
     await saveFile(file.path, filePath, file.mimetype);
   }

@@ -8,7 +8,7 @@ import { verifyAndDecodeAccessToken } from '../utils/tokens';
 import AccessTokenPayload from '../domain/AccessTokenPayload';
 import { LoginCredential, TokenCredential } from '../domain/login';
 
-const debug: Debugger = Debug('threedify:services:auth');
+const debug: Debugger = Debug('threedify:services:userAuth');
 
 export async function createNewUser(
   newUser: NewUser

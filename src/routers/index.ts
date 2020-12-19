@@ -7,13 +7,15 @@ import userRouter from './users';
 import imageRouter from './images';
 import reconstructionRouter from './reconstructions';
 
+import authenticateApp from '../middlewares/authenticateApp';
+
 const router: Router = Router();
 
 router.use('/', homeRouter);
 router.use('/docs', docsRouter);
-router.use('/auth', authRouter);
-router.use('/users', userRouter);
-router.use('/images', imageRouter);
-router.use('/reconstructions', reconstructionRouter);
+router.use('/auth', authenticateApp, authRouter);
+router.use('/users', authenticateApp, userRouter);
+router.use('/images', authenticateApp, imageRouter);
+router.use('/reconstructions', authenticateApp, reconstructionRouter);
 
 export default router;

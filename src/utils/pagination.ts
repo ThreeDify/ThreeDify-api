@@ -29,6 +29,11 @@ export function getPaginationQuery(query: any): PaginationQuery {
     (paginationQuery.filters as string | undefined)?.split(',') ||
     defaultOption.filters;
 
+  if (paginationQuery.q) {
+    debug('Adding search filter.');
+    filters.push('search');
+  }
+
   debug('Extracting pagination sort order.');
   let sortOrder = (paginationQuery.order as string)?.toUpperCase();
   if (!Object.values(SortOrder).includes(sortOrder as SortOrder)) {
@@ -36,6 +41,7 @@ export function getPaginationQuery(query: any): PaginationQuery {
   }
 
   return {
+    q: paginationQuery.q,
     filters: filters.map((x) => x.trim()),
     page: +paginationQuery.page || defaultOption.page,
     size: +paginationQuery.size || defaultOption.size,
@@ -45,12 +51,19 @@ export function getPaginationQuery(query: any): PaginationQuery {
 
 export async function applyPagination<T extends Model>(
   schema: QueryBuilder<T>,
-  query: PaginationQuery
+  query: PaginationQuery,
+  availableFilters?: string[]
 ): Promise<PaginatedResult<T> | undefined> {
+  let availableModelFilters = availableFilters || [];
+
   debug('Applying pagination.');
   const result: Page<T> = await schema
-    .context({ sortOrder: query.order })
-    .modify(query.filters)
+    .context({ sortOrder: query.order, queryString: query.q })
+    .modify(
+      query.filters.filter((filter) => {
+        return availableModelFilters.includes(filter);
+      })
+    )
     .page(query.page - 1, query.size);
 
   if (result.results.length > 0) {

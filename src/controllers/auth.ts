@@ -3,12 +3,12 @@ import { NextFunction, Request, Response } from 'express';
 
 import User from '../models/User';
 import Token from '../models/Token';
-import authService from '../services/auth';
 import { NewUser } from '../domain/NewUser';
 import tokenService from '../services/tokens';
 import UserResponse from '../domain/UserResponse';
+import userAuthService from '../services/userAuth';
 import { LoginCredential, TokenCredential } from '../domain/login';
-import { AuthenticatedRequest } from '../middlewares/authenticate';
+import { AuthenticatedRequest } from '../middlewares/authenticateUser';
 
 const debug: Debugger = Debug('threedify:controller:auth');
 
@@ -18,7 +18,7 @@ export async function register(
   next: NextFunction
 ) {
   try {
-    let user: User | undefined = await authService.createNewUser(req.body);
+    let user: User | undefined = await userAuthService.createNewUser(req.body);
 
     if (user) {
       res.json({
@@ -50,7 +50,7 @@ export async function login(
 ) {
   try {
     debug('Authenticating user.');
-    let user: User | undefined = await authService.login(req.body);
+    let user: User | undefined = await userAuthService.login(req.body);
 
     if (user) {
       debug('Generating tokens for user.');

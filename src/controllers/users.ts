@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 import User from '../models/User';
 import userService from '../services/users';
 import UserResponse from '../domain/UserResponse';
-import { AuthenticatedRequest } from '../middlewares/authenticate';
+import { AuthenticatedRequest } from '../middlewares/authenticateUser';
 
 const debug: Debugger = Debug('threedify:controller:users');
 

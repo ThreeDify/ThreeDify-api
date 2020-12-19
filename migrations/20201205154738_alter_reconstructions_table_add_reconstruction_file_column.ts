@@ -4,12 +4,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.table(
     'reconstructions',
     (table: Knex.AlterTableBuilder) => {
-      table
-        .enu('state', ['INQUEUE', 'INPROGRESS', 'COMPLETED'], {
-          useNative: true,
-          enumName: 'ReconstructionState',
-        })
-        .defaultTo('INQUEUE');
+      table.string('reconstruction_file').nullable();
     }
   );
 }
@@ -18,9 +13,7 @@ export async function down(knex: Knex): Promise<void> {
   await knex.schema.table(
     'reconstructions',
     (table: Knex.AlterTableBuilder) => {
-      table.dropColumn('state');
+      table.dropColumn('reconstruction_file');
     }
   );
-
-  await knex.schema.raw('DROP TYPE "ReconstructionState";');
 }
