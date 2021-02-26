@@ -35,8 +35,6 @@ router.get('/me', authenticateUser, UserController.me);
  * /users:
  *  get:
  *    description: End point to fetch all users.
- *    security:
- *      - Authentication: []
  *    responses:
  *      200:
  *        $ref: '#/components/responses/UserArrayResponse'
@@ -47,7 +45,7 @@ router.get('/me', authenticateUser, UserController.me);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/', authenticateUser, UserController.index);
+router.get('/', UserController.index);
 
 /**
  * @swagger
@@ -55,8 +53,6 @@ router.get('/', authenticateUser, UserController.index);
  * /users/{user_id}:
  *  get:
  *    description: End point to fetch specific user info.
- *    security:
- *      - Authentication: []
  *    parameters:
  *      - name: user_id
  *        in: path
@@ -71,7 +67,7 @@ router.get('/', authenticateUser, UserController.index);
  *      500:
  *        $ref: '#/components/responses/HTTPError'
  */
-router.get('/:userId(\\d+)', authenticateUser, UserController.user);
+router.get('/:userId(\\d+)', UserController.user);
 
 /**
  * @swagger
@@ -79,8 +75,6 @@ router.get('/:userId(\\d+)', authenticateUser, UserController.user);
  * /users/{user_id}/reconstructions:
  *  get:
  *    description: End point to fetch reconstructions of a user.
- *    security:
- *      - Authentication: []
  *    parameters:
  *      - name: user_id
  *        in: path
@@ -102,7 +96,6 @@ router.get('/:userId(\\d+)', authenticateUser, UserController.user);
  */
 router.get(
   '/:userId(\\d+)/reconstructions',
-  authenticateUser,
   ReconstructionController.userReconstruction
 );
 
