@@ -109,7 +109,7 @@ router.post(
  * @swagger
  *
  * /reconstructions/{id}/addImage:
- *  get:
+ *  put:
  *    description: End point to add image to a reconstruction.
  *    parameters:
  *      - name: id
