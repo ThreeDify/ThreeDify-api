@@ -1,17 +1,12 @@
 import { Router } from 'express';
 
-import { uploadImages } from '../middlewares/uploadImage';
+import { uploadSingleImage } from '../middlewares/uploadImage';
 import authenticateUser from '../middlewares/authenticateUser';
 import ReconstructionController from '../controllers/reconstructions';
 import { uploadReconstruction } from '../middlewares/uploadReconstruction';
 import validateNewReconstruction from '../middlewares/validateNewReconstruction';
 
 const router: Router = Router();
-
-const imageUploadMiddlewares = uploadImages('images');
-const reconstructionUploadMiddlewares = uploadReconstruction(
-  'reconstruction_file'
-);
 
 /**
  * @swagger
@@ -106,10 +101,39 @@ router.get(
 router.post(
   '/create',
   authenticateUser,
-  imageUploadMiddlewares[0],
   validateNewReconstruction,
-  imageUploadMiddlewares[1],
   ReconstructionController.create
+);
+
+/**
+ * @swagger
+ *
+ * /reconstructions/{id}/addImage:
+ *  put:
+ *    description: End point to add image to a reconstruction.
+ *    parameters:
+ *      - name: id
+ *        in: path
+ *        description: Id of reconstruction.
+ *    responses:
+ *      200:
+ *        description: OK
+ *        content:
+ *          text/plain:
+ *            schema:
+ *              type: string
+ *      422:
+ *        $ref: '#/components/responses/ValidationErrorResponse'
+ *      404:
+ *        $ref: '#/components/responses/HTTPError'
+ *      500:
+ *        $ref: '#/components/responses/HTTPError'
+ */
+router.put(
+  '/:id/addImage',
+  authenticateUser,
+  uploadSingleImage('image'),
+  ReconstructionController.addImage
 );
 
 /**
@@ -196,7 +220,7 @@ router.put('/:id/failed', ReconstructionController.reconstructionFailed);
  */
 router.put(
   '/:id/success',
-  reconstructionUploadMiddlewares,
+  uploadReconstruction('reconstruction_file'),
   ReconstructionController.reconstructionCompleted
 );
 

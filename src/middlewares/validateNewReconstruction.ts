@@ -2,7 +2,6 @@ import { ValidationResult } from 'joi';
 import Debug, { Debugger } from 'debug';
 import { NextFunction, Request, Response } from 'express';
 
-import { cleanUp } from '../utils/uploads';
 import { errorToResponse } from '../utils/joi';
 import NewReconstruction from '../domain/NewReconstruction';
 import { ValidationErrorResponse } from '../domain/validations';
@@ -27,11 +26,6 @@ export async function validateNewReconstruction(
   if (result.error) {
     res.status(422);
     res.json(errorToResponse(result.error));
-
-    debug('Cleaning up temp files.');
-    for (let file of req.files as Express.Multer.File[]) {
-      await cleanUp(file.path);
-    }
 
     return;
   }
