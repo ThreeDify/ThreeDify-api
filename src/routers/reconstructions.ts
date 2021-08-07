@@ -166,7 +166,7 @@ router.put('/batch', ReconstructionController.reconstructionBatch);
  *
  * /reconstructions/{id}/failed:
  *  put:
- *    description: End point to set reconstruction state to failed. This changes the state to `IN QUEUE`.
+ *    description: End point to set reconstruction state to failed. This changes the state to `FAILED`.
  *    parameters:
  *      - name: id
  *        in: path

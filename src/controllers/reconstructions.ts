@@ -103,10 +103,10 @@ export async function reconstructionFailed(
     if (reconstruction) {
       // TODO: Add process logs for the reconstruction and failed state.
 
-      debug('Setting state of reconstruction to in queue.');
+      debug('Setting state of reconstruction to failed.');
       await reconstructionService.setState(
         reconstruction,
-        ReconstructionState.INQUEUE
+        ReconstructionState.FAILED
       );
 
       res.sendStatus(200);
