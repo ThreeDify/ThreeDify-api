@@ -57,6 +57,7 @@ const TABLE_NAME: string = 'reconstructions';
  *          - orderByCreatedAt
  *          - inQueue
  *          - inProgress
+ *          - failed
  *          - completed
  *  responses:
  *    Reconstruction:
@@ -134,6 +135,11 @@ export class Reconstruction extends BaseModel {
 
         builder.where(ref('state'), '=', ReconstructionState.COMPLETED);
       },
+      failed(builder: QueryBuilder<Reconstruction>) {
+        const { ref } = Reconstruction;
+
+        builder.where(ref('state'), '=', ReconstructionState.FAILED);
+      },
       orderByCreatedAt(builder: QueryBuilder<Reconstruction>) {
         const { ref } = Reconstruction;
 
@@ -143,7 +149,14 @@ export class Reconstruction extends BaseModel {
   }
 
   static get filters(): string[] {
-    return ['search', 'inQueue', 'inProgress', 'completed', 'orderByCreatedAt'];
+    return [
+      'search',
+      'inQueue',
+      'inProgress',
+      'completed',
+      'failed',
+      'orderByCreatedAt',
+    ];
   }
 
   static get relationMappings() {
